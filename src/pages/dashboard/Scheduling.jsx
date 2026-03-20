@@ -23,14 +23,17 @@ export default function Scheduling() {
   const [open, setOpen] = useState(false)
   const [form, setForm] = useState({ staff: '', day_of_week: 0, start_time: '09:00', end_time: '18:00' })
 
-  const { data: schedules = [], isLoading } = useQuery({
+  const { data: schedulesData, isLoading } = useQuery({
     queryKey: ['schedules'],
-    queryFn:  () => schedulingApi.list().then(r => r.data),
+    queryFn:  () => schedulingApi.list().then(r => r.data.data),
   })
-  const { data: staffList = [] } = useStaff()
+  const schedules = schedulesData?.results ?? []
+
+  const { data: staffData } = useStaff()
+  const staffList = staffData?.results ?? []
 
   const createMut = useMutation({
-    mutationFn: (data) => schedulingApi.create(data).then(r => r.data),
+    mutationFn: (data) => schedulingApi.create(data).then(r => r.data.data),
     onSuccess:  () => { qc.invalidateQueries({ queryKey: ['schedules'] }); setOpen(false) },
   })
   const deleteMut = useMutation({
