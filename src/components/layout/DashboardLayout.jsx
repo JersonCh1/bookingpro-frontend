@@ -29,34 +29,36 @@ export default function DashboardLayout() {
 
       {/* Sidebar */}
       <aside className={`
-        fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200
+        fixed inset-y-0 left-0 z-30 w-64 flex flex-col
         transform transition-transform duration-200 ease-in-out
         lg:static lg:translate-x-0
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
+      `}
+        style={{ background: 'linear-gradient(160deg, #4F46E5 0%, #7C3AED 100%)' }}
+      >
         {/* Logo */}
-        <div className='flex items-center justify-between h-16 px-6 border-b border-gray-200'>
-          <div className='flex items-center gap-2'>
-            <div className='w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center'>
+        <div className='flex items-center justify-between h-16 px-6 border-b border-white/10'>
+          <div className='flex items-center gap-2.5'>
+            <div className='w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center'>
               <Calendar className='w-4 h-4 text-white' />
             </div>
-            <span className='font-bold text-gray-900'>BookingPro</span>
+            <span className='font-bold text-white text-lg tracking-tight'>AgendaYa</span>
           </div>
-          <button className='lg:hidden p-1 rounded hover:bg-gray-100' onClick={() => setSidebarOpen(false)}>
+          <button className='lg:hidden p-1 rounded hover:bg-white/10 text-white' onClick={() => setSidebarOpen(false)}>
             <X className='w-5 h-5' />
           </button>
         </div>
 
         {/* Tenant info */}
         {tenant && (
-          <div className='px-6 py-4 border-b border-gray-100'>
-            <p className='text-xs text-gray-500 uppercase tracking-wide font-medium'>Negocio</p>
-            <p className='text-sm font-semibold text-gray-900 mt-0.5 truncate'>{tenant.name}</p>
+          <div className='px-5 py-4 border-b border-white/10'>
+            <p className='text-xs text-white/50 uppercase tracking-wide font-medium'>Negocio</p>
+            <p className='text-sm font-semibold text-white mt-0.5 truncate'>{tenant.name}</p>
             <a
               href={`/book/${tenant.slug}`}
               target='_blank'
               rel='noopener noreferrer'
-              className='inline-flex items-center gap-1 text-xs text-primary-600 hover:text-primary-700 mt-1'
+              className='inline-flex items-center gap-1 text-xs text-white/60 hover:text-white mt-1 transition-colors'
             >
               Ver página pública <ExternalLink className='w-3 h-3' />
             </a>
@@ -64,7 +66,7 @@ export default function DashboardLayout() {
         )}
 
         {/* Nav */}
-        <nav className='flex-1 px-3 py-4 space-y-1'>
+        <nav className='flex-1 px-3 py-4 space-y-0.5'>
           {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
@@ -72,7 +74,9 @@ export default function DashboardLayout() {
               end={end}
               className={({ isActive }) => `
                 flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                ${isActive ? 'bg-primary-50 text-primary-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}
+                ${isActive
+                  ? 'bg-white/20 text-white'
+                  : 'text-white/70 hover:bg-white/10 hover:text-white'}
               `}
               onClick={() => setSidebarOpen(false)}
             >
@@ -83,23 +87,23 @@ export default function DashboardLayout() {
         </nav>
 
         {/* User */}
-        <div className='px-3 py-4 border-t border-gray-200'>
+        <div className='px-3 py-4 border-t border-white/10'>
           <div className='flex items-center gap-3 px-3 py-2 mb-1'>
-            <div className='w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0'>
-              <span className='text-primary-700 text-sm font-semibold'>
+            <div className='w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0'>
+              <span className='text-white text-sm font-semibold'>
                 {user?.first_name?.[0] || user?.username?.[0] || '?'}
               </span>
             </div>
             <div className='min-w-0'>
-              <p className='text-sm font-medium text-gray-900 truncate'>
+              <p className='text-sm font-medium text-white truncate'>
                 {user?.first_name} {user?.last_name}
               </p>
-              <p className='text-xs text-gray-500 truncate'>{user?.email}</p>
+              <p className='text-xs text-white/50 truncate'>{user?.email}</p>
             </div>
           </div>
           <button
             onClick={logout}
-            className='flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors'
+            className='flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-white/60 hover:bg-white/10 hover:text-white transition-colors'
           >
             <LogOut className='w-5 h-5' />
             Cerrar sesión
@@ -113,7 +117,7 @@ export default function DashboardLayout() {
           <button onClick={() => setSidebarOpen(true)} className='p-2 rounded-lg hover:bg-gray-100'>
             <Menu className='w-5 h-5' />
           </button>
-          <span className='font-semibold text-gray-900'>BookingPro</span>
+          <span className='font-bold text-gray-900'>AgendaYa</span>
         </header>
         <main className='flex-1 p-6'>
           <Outlet />
