@@ -32,7 +32,7 @@ export function SidebarLogo() {
       alt='AgendaYa'
       draggable={false}
       style={{
-        height: 34,
+        height: 102,
         width: 'auto',
         display: 'block',
         filter: 'brightness(0) invert(1)',
