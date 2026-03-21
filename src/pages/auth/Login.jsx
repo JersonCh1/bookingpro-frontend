@@ -192,10 +192,19 @@ export default function Login() {
           opacity: 0.6,
         }} />
 
-        {/* ── Header: logo izquierda + botón derecha ── */}
-        <header className='header-enter relative z-10 flex-shrink-0 flex items-center justify-between px-8 py-4'
-          style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-          <LogoFull height={58} />
+        {/* ── Header: sticky, fondo sólido, z-20 ── */}
+        <header className='header-enter sticky top-0 z-20 flex-shrink-0 flex items-center justify-between px-8 py-3'
+          style={{
+            backgroundColor: 'rgba(255,255,255,0.96)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            borderBottom: '1px solid rgba(0,0,0,0.07)',
+            boxShadow: '0 1px 12px rgba(0,0,0,0.06)',
+          }}>
+          <div className='absolute bottom-0 left-0 right-0 h-[1.5px]' style={{
+            background: 'linear-gradient(90deg, transparent, rgba(192,57,43,0.4) 40%, rgba(231,76,60,0.4) 60%, transparent)',
+          }} />
+          <LogoFull height={52} />
           <Link
             to='/register'
             className='inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-lg transition-all'
