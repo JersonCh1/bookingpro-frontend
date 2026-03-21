@@ -12,7 +12,8 @@ import Staff       from './pages/dashboard/Staff'
 import Scheduling  from './pages/dashboard/Scheduling'
 import Settings    from './pages/dashboard/Settings'
 
-import BookingPage from './pages/public/BookingPage'
+import BookingPage  from './pages/public/BookingPage'
+import LandingPage  from './pages/public/LandingPage'
 
 function PrivateRoute({ children }) {
   const { token } = useAuthStore()
@@ -41,8 +42,8 @@ export default function App() {
         </Route>
 
         <Route path='/book/:slug' element={<BookingPage />} />
-        <Route path='/'        element={<Navigate to='/dashboard' replace />} />
-        <Route path='*'        element={<Navigate to='/dashboard' replace />} />
+        <Route path='/'        element={<PublicRoute><LandingPage /></PublicRoute>} />
+        <Route path='*'        element={<Navigate to='/' replace />} />
       </Routes>
     </BrowserRouter>
   )
