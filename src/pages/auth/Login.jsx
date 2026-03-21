@@ -12,19 +12,19 @@ const schema = z.object({
   password: z.string().min(1, 'Ingresa tu contraseña'),
 })
 
-const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
-  id:       i,
+const PARTICLES = Array.from({ length: 22 }, (_, i) => ({
+  id: i,
   left:     `${(i * 4.7 + 3) % 96}%`,
-  top:      `${(i * 7.3 + 5) % 85}%`,
-  size:     i % 3 === 0 ? 5 : i % 3 === 1 ? 3 : 4,
-  duration: `${4 + (i % 5) * 1.4}s`,
-  delay:    `${(i * 0.65) % 4}s`,
+  top:      `${(i * 7.3 + 5) % 92}%`,
+  size:     i % 3 === 0 ? 5 : i % 3 === 1 ? 2 : 3.5,
+  duration: `${5 + (i % 6) * 1.2}s`,
+  delay:    `${(i * 0.55) % 4.5}s`,
 }))
 
 const STATS = [
   { suffix: '+', target: 500, label: 'negocios activos' },
-  { fixed: '24/7',           label: 'disponibilidad'   },
-  { fixed: '0',              label: 'llamadas perdidas' },
+  { fixed: '24/7', label: 'disponibilidad' },
+  { fixed: '0',   label: 'llamadas perdidas' },
 ]
 
 const CHIPS = ['✂ Barberías', '💅 Salones', '🏥 Consultorios', '🐾 Veterinarias']
@@ -54,14 +54,17 @@ function CountUp({ target, suffix = '' }) {
 function Field({ label, error, ...props }) {
   return (
     <div>
-      <label className='block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2'>{label}</label>
+      <label className='block text-xs font-semibold text-gray-500 mb-2 tracking-wide'>{label}</label>
       <input
-        className={`glow-input w-full bg-transparent pb-2.5 text-sm text-gray-900 font-medium
-          border-0 border-b-2 outline-none transition-all placeholder:text-gray-300
-          ${error ? 'border-red-400' : 'border-gray-200 focus:border-primary-600'}`}
+        className={`w-full px-4 py-3 rounded-xl text-sm text-gray-900 font-medium outline-none transition-all
+          bg-white border placeholder:text-gray-300
+          ${error
+            ? 'border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100'
+            : 'border-gray-200 focus:border-red-400 focus:ring-2 focus:ring-red-50'
+          }`}
         {...props}
       />
-      {error && <p className='mt-1 text-xs text-red-500'>{error}</p>}
+      {error && <p className='mt-1.5 text-xs text-red-500 font-medium'>{error}</p>}
     </div>
   )
 }
@@ -72,20 +75,28 @@ export default function Login() {
   const msg = error?.response?.data?.error ?? null
 
   return (
-    /* h-screen en desktop — todo en una sola ventana, sin scroll de página */
     <div className='flex min-h-screen lg:h-screen' style={{ backgroundColor: '#0D0D0D' }}>
 
-      {/* ══ PANEL IZQUIERDO 52% ══ */}
-      <div className='hidden lg:flex lg:w-[52%] flex-col overflow-hidden relative px-12 py-10'>
+      {/* ══════════════════════════════
+          PANEL IZQUIERDO — Marketing
+      ══════════════════════════════ */}
+      <div className='hidden lg:flex lg:w-[52%] flex-col overflow-hidden relative px-14 py-10'>
 
-        {/* Fondo grid */}
+        {/* Grid animado */}
         <div className='absolute inset-0 pointer-events-none' style={{
-          backgroundImage: `linear-gradient(rgba(192,57,43,0.07) 1px,transparent 1px),
-            linear-gradient(90deg,rgba(192,57,43,0.07) 1px,transparent 1px)`,
-          backgroundSize: '40px 40px',
+          backgroundImage: `linear-gradient(rgba(192,57,43,0.06) 1px,transparent 1px),
+            linear-gradient(90deg,rgba(192,57,43,0.06) 1px,transparent 1px)`,
+          backgroundSize: '44px 44px',
         }} />
+
+        {/* Glow central */}
         <div className='absolute inset-0 pointer-events-none' style={{
-          background: 'radial-gradient(ellipse at 30% 45%, rgba(192,57,43,0.1) 0%, transparent 60%)',
+          background: 'radial-gradient(ellipse at 30% 50%, rgba(192,57,43,0.13) 0%, transparent 58%)',
+        }} />
+
+        {/* Vignette edges */}
+        <div className='absolute inset-0 pointer-events-none' style={{
+          background: 'radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0,0,0,0.5) 100%)',
         }} />
 
         {/* Partículas */}
@@ -96,139 +107,148 @@ export default function Login() {
           }} />
         ))}
 
-        {/* ── Logo ── */}
-        <div className='relative z-10 mb-8'>
-          <LogoFull height={64} dark />
-        </div>
-
-        {/* ── Copy central — fluye naturalmente sin justify-between ── */}
+        {/* Contenido */}
         <div className='relative z-10 flex-1 flex flex-col justify-center'>
-          <div className='grow-line h-0.5 mb-6' style={{ backgroundColor: '#C0392B' }} />
+          <div className='grow-line h-px mb-8' style={{ backgroundColor: '#C0392B' }} />
 
-          <h1 className='text-4xl xl:text-5xl font-black text-white leading-[1.05] mb-3 tracking-tight'>
+          <h1 className='text-4xl xl:text-5xl font-black text-white leading-[1.05] mb-4 tracking-tight'>
             Tu negocio<br />nunca duerme.
           </h1>
 
-          <div className='overflow-hidden mb-8'>
+          <div className='overflow-hidden mb-10'>
             <p className='typing-text text-sm font-semibold' style={{ color: '#C0392B' }}>
               Reservas automáticas 24/7.
             </p>
           </div>
 
           {/* Stats */}
-          <div className='flex gap-8 mb-7'>
+          <div className='flex gap-10 mb-8'>
             {STATS.map(s => (
               <div key={s.label}>
-                <p className='text-2xl font-black' style={{ color: '#C0392B' }}>
+                <p className='text-3xl font-black' style={{ color: '#C0392B' }}>
                   {s.target != null ? <CountUp target={s.target} suffix={s.suffix} /> : s.fixed}
                 </p>
-                <p className='text-xs text-gray-500 mt-0.5 font-medium'>{s.label}</p>
+                <p className='text-xs text-gray-500 mt-1 font-medium'>{s.label}</p>
               </div>
             ))}
           </div>
 
           {/* Chips */}
-          <div className='flex flex-wrap gap-2 mb-7'>
+          <div className='flex flex-wrap gap-2 mb-8'>
             {CHIPS.map(c => (
               <span key={c}
-                className='text-xs font-semibold px-3 py-1.5 rounded-full transition-colors cursor-default'
-                style={{ backgroundColor: '#141414', color: '#6b7280', border: '1px solid #222' }}
+                className='text-xs font-semibold px-3 py-1.5 rounded-full cursor-default transition-all'
+                style={{ backgroundColor: '#111', color: '#555', border: '1px solid #222' }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = '#C0392B'; e.currentTarget.style.color = '#E74C3C' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#222'; e.currentTarget.style.color = '#6b7280' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#222'; e.currentTarget.style.color = '#555' }}
               >{c}</span>
             ))}
           </div>
 
-          {/* Precio — pegado al contenido, sin gap enorme */}
-          <div className='rounded-xl p-4 mb-6'
-            style={{ backgroundColor: '#111', border: '1px solid #1A1A1A' }}>
-            <p className='text-[10px] font-bold uppercase tracking-widest mb-1' style={{ color: '#4A4A4A' }}>
+          {/* Precio */}
+          <div className='rounded-2xl p-5 mb-8' style={{ backgroundColor: '#0F0F0F', border: '1px solid #1E1E1E' }}>
+            <p className='text-[10px] font-bold uppercase tracking-widest mb-1.5' style={{ color: '#3A3A3A' }}>
               Precio único en Perú
             </p>
-            <div className='flex items-baseline gap-1.5'>
-              <span className='text-xl font-black text-white'>S/. 80</span>
-              <span className='text-sm text-gray-600'>/ mes</span>
+            <div className='flex items-baseline gap-2'>
+              <span className='text-2xl font-black text-white'>S/. 80</span>
+              <span className='text-sm' style={{ color: '#444' }}>/ mes</span>
             </div>
-            <p className='text-xs mt-0.5' style={{ color: '#4A4A4A' }}>Sin contrato · Cancela cuando quieras</p>
+            <p className='text-xs mt-1' style={{ color: '#3A3A3A' }}>Sin contrato · Cancela cuando quieras</p>
           </div>
 
           {/* Testimonial */}
-          <blockquote className='pl-4 text-xs text-gray-500 italic leading-relaxed'
-            style={{ borderLeft: '2px solid #C0392B' }}>
+          <blockquote className='pl-4 text-xs italic leading-relaxed' style={{ color: '#4A4A4A', borderLeft: '2px solid #2A2A2A' }}>
             "Antes perdíamos citas por no contestar. Ahora todo es automático."
-            <span className='block mt-1 not-italic' style={{ color: '#4A4A4A' }}>— Cliente desde 2024 · Arequipa</span>
+            <span className='block mt-1 not-italic' style={{ color: '#333' }}>— Cliente desde 2024 · Arequipa</span>
           </blockquote>
         </div>
 
-        {/* Footer */}
-        <p className='relative z-10 text-xs mt-6' style={{ color: '#2C2C2C' }}>
-          © {new Date().getFullYear()} AgendaYa · Hecho en Perú
+        <p className='relative z-10 text-xs' style={{ color: '#222' }}>
+          © {new Date().getFullYear()} AgendaYa · Hecho en Perú 🇵🇪
         </p>
       </div>
 
-      {/* ══ PANEL DERECHO 48% ══ */}
-      <div className='w-full lg:w-[48%] flex items-center justify-center px-8 py-10 relative overflow-hidden'
-        style={{ backgroundColor: '#F5F0EB' }}>
+      {/* ══════════════════════════════
+          PANEL DERECHO — Formulario
+      ══════════════════════════════ */}
+      <div className='w-full lg:w-[48%] flex flex-col relative overflow-hidden bg-white'>
 
-        {/* ── Efectos panel derecho ── */}
-        {/* Línea roja top */}
+        {/* Efectos fondo panel derecho */}
         <div className='absolute top-0 left-0 right-0 h-[2px] pointer-events-none' style={{
-          background: 'linear-gradient(90deg, transparent, #C0392B 35%, #E74C3C 65%, transparent)',
+          background: 'linear-gradient(90deg, transparent, #C0392B 40%, #E74C3C 60%, transparent)',
         }} />
-        {/* Orb top-right */}
-        <div className='absolute -top-32 -right-32 w-96 h-96 rounded-full pointer-events-none' style={{
-          background: 'radial-gradient(circle, rgba(192,57,43,0.09) 0%, transparent 65%)',
-        }} />
-        {/* Orb bottom-left */}
-        <div className='absolute -bottom-24 -left-24 w-72 h-72 rounded-full pointer-events-none' style={{
+        <div className='absolute -top-40 -right-40 w-[28rem] h-[28rem] rounded-full pointer-events-none' style={{
           background: 'radial-gradient(circle, rgba(192,57,43,0.06) 0%, transparent 65%)',
         }} />
-        {/* Dot grid sutil */}
+        <div className='absolute -bottom-32 -left-32 w-80 h-80 rounded-full pointer-events-none' style={{
+          background: 'radial-gradient(circle, rgba(192,57,43,0.04) 0%, transparent 65%)',
+        }} />
         <div className='absolute inset-0 pointer-events-none' style={{
-          backgroundImage: 'radial-gradient(rgba(192,57,43,0.13) 1px, transparent 1px)',
-          backgroundSize: '26px 26px',
-          opacity: 0.55,
+          backgroundImage: 'radial-gradient(rgba(192,57,43,0.08) 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+          opacity: 0.6,
         }} />
 
-        <div className='w-full max-w-sm relative z-10'>
+        {/* ── Header: logo izquierda + botón derecha ── */}
+        <header className='relative z-10 flex-shrink-0 flex items-center justify-between px-8 py-4'
+          style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+          <LogoFull height={36} />
+          <Link
+            to='/register'
+            className='inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-lg transition-all'
+            style={{ backgroundColor: '#0D0D0D', color: 'white' }}
+            onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#C0392B' }}
+            onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#0D0D0D' }}
+          >
+            Crear cuenta <ArrowRight className='w-3.5 h-3.5' />
+          </Link>
+        </header>
 
-          {/* Logo móvil */}
-          <div className='lg:hidden mb-8 flex justify-center'>
-            <LogoFull height={44} />
-          </div>
+        {/* ── Contenido del formulario ── */}
+        <div className='relative z-10 flex-1 flex items-center justify-center px-8 py-10'>
+          <div className='w-full max-w-sm'>
 
-          <p className='text-[10px] font-bold uppercase tracking-widest mb-1.5' style={{ color: '#C0392B' }}>
-            Panel de administración
-          </p>
-          <h2 className='text-2xl font-black text-gray-900 mb-1 tracking-tight'>Bienvenido de vuelta</h2>
-          <p className='text-sm text-gray-400 mb-8'>Ingresa tus credenciales para continuar</p>
-
-          {msg && (
-            <div className='mb-5 p-3.5 rounded-xl flex gap-3 bg-red-50 border border-red-100'>
-              <span className='text-red-400 text-sm'>⚠</span>
-              <p className='text-sm text-red-700 font-medium'>{msg}</p>
+            {/* Encabezado */}
+            <div className='mb-8'>
+              <span className='inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3'
+                style={{ backgroundColor: 'rgba(192,57,43,0.08)', color: '#C0392B' }}>
+                <span className='w-1.5 h-1.5 rounded-full bg-current animate-pulse' />
+                Panel de administración
+              </span>
+              <h2 className='text-2xl font-black text-gray-900 tracking-tight leading-tight'>
+                Bienvenido de vuelta
+              </h2>
+              <p className='text-sm text-gray-400 mt-1'>Ingresa tus credenciales para continuar</p>
             </div>
-          )}
 
-          <form onSubmit={handleSubmit(d => mutate(d))} className='space-y-7'>
-            <Field label='Correo electrónico' type='email' placeholder='tu@negocio.com'
-              autoComplete='email' error={errors.email?.message} {...register('email')} />
-            <Field label='Contraseña' type='password' placeholder='••••••••'
-              autoComplete='current-password' error={errors.password?.message} {...register('password')} />
+            {msg && (
+              <div className='mb-6 p-4 rounded-xl flex gap-3 bg-red-50 border border-red-100'>
+                <span className='text-red-400'>⚠</span>
+                <p className='text-sm text-red-700 font-medium'>{msg}</p>
+              </div>
+            )}
 
-            <button type='submit' disabled={isPending}
-              className='shimmer-btn w-full py-4 rounded-xl text-sm font-black text-white transition-all disabled:opacity-60 flex items-center justify-center gap-2'
-              style={{ backgroundColor: '#C0392B' }}
-              onMouseEnter={e => !isPending && (e.currentTarget.style.backgroundColor = '#A93226')}
-              onMouseLeave={e => !isPending && (e.currentTarget.style.backgroundColor = '#C0392B')}>
-              {isPending ? <><Loader2 className='w-4 h-4 animate-spin' />Ingresando...</> : <>Iniciar sesión <ArrowRight className='w-4 h-4' /></>}
-            </button>
-          </form>
+            <form onSubmit={handleSubmit(d => mutate(d))} className='space-y-5'>
+              <Field label='Correo electrónico' type='email' placeholder='tu@negocio.com'
+                autoComplete='email' error={errors.email?.message} {...register('email')} />
+              <Field label='Contraseña' type='password' placeholder='••••••••'
+                autoComplete='current-password' error={errors.password?.message} {...register('password')} />
 
-          <div className='mt-8 pt-6' style={{ borderTop: '1px solid rgba(0,0,0,0.08)' }}>
-            <p className='text-center text-sm text-gray-400'>
+              <button type='submit' disabled={isPending}
+                className='shimmer-btn w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60 flex items-center justify-center gap-2 mt-2'
+                style={{ backgroundColor: '#C0392B' }}
+                onMouseEnter={e => !isPending && (e.currentTarget.style.backgroundColor = '#A93226')}
+                onMouseLeave={e => !isPending && (e.currentTarget.style.backgroundColor = '#C0392B')}>
+                {isPending
+                  ? <><Loader2 className='w-4 h-4 animate-spin' />Ingresando...</>
+                  : <>Iniciar sesión <ArrowRight className='w-4 h-4' /></>}
+              </button>
+            </form>
+
+            <p className='text-center text-sm text-gray-400 mt-8'>
               ¿No tienes cuenta?{' '}
-              <Link to='/register' className='font-bold' style={{ color: '#C0392B' }}
+              <Link to='/register' className='font-bold transition-colors' style={{ color: '#C0392B' }}
                 onMouseEnter={e => { e.currentTarget.style.color = '#922B21' }}
                 onMouseLeave={e => { e.currentTarget.style.color = '#C0392B' }}>
                 Regístrate gratis
