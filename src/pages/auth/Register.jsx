@@ -104,7 +104,7 @@ export default function Register() {
 
         {/* Logo */}
         <div className='relative z-10 mb-8'>
-          <LogoFull height={52} dark />
+          <LogoFull height={64} dark />
         </div>
 
         {/* Copy — fluye naturalmente */}
