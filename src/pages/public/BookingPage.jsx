@@ -567,15 +567,20 @@ function StepSuccess({ booking, service, tenant }) {
       </div>
 
       {/* WhatsApp banner */}
-      <div className='rounded-2xl p-4 flex items-center gap-3 text-left'
+      <div className='rounded-2xl p-4 space-y-2'
         style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}>
-        <div className='w-8 h-8 rounded-xl bg-green-500 flex items-center justify-center flex-shrink-0 text-white text-sm font-black'>
-          W
+        <div className='flex items-center gap-3'>
+          <div className='w-8 h-8 rounded-xl bg-green-500 flex items-center justify-center flex-shrink-0 text-white text-sm font-black'>
+            W
+          </div>
+          <p className='text-sm font-bold text-green-800'>Notificaciones enviadas por WhatsApp</p>
         </div>
-        <div>
-          <p className='text-sm font-bold text-green-800'>Confirmación por WhatsApp en camino</p>
-          <p className='text-xs text-green-600 mt-0.5'>Revisa tu teléfono en los próximos minutos</p>
-        </div>
+        <p className='text-xs text-green-700 pl-11'>
+          ✓ Recibirás confirmación al número que ingresaste
+        </p>
+        <p className='text-xs text-green-700 pl-11'>
+          ✓ El negocio también fue notificado por WhatsApp
+        </p>
       </div>
     </div>
   )

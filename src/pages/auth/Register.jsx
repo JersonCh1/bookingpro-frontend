@@ -185,7 +185,7 @@ export default function Register() {
       {/* ══════════════════════════════
           PANEL DERECHO — Formulario
       ══════════════════════════════ */}
-      <div className='w-full lg:w-[56%] flex flex-col relative overflow-hidden bg-white'>
+      <div className='w-full lg:w-[56%] flex flex-col relative overflow-hidden bg-[#0D0D0D] lg:bg-white'>
 
         {/* Efectos fondo */}
         <div className='absolute top-0 left-0 right-0 h-[2px] pointer-events-none' style={{
@@ -228,9 +228,10 @@ export default function Register() {
           </Link>
         </header>
 
-        {/* ── Formulario — siempre debajo del header, sin centering vertical ── */}
-        <div className='panel-enter relative z-10 flex-1 overflow-y-auto flex justify-center px-8 pt-8 pb-6'>
-          <div className='w-full max-w-md'>
+        {/* ── Formulario ── */}
+        <div className='panel-enter relative z-10 flex-1 overflow-y-auto flex justify-center px-4 sm:px-8 pt-6 pb-6'>
+          {/* Card blanca en móvil (sobre fondo negro), transparente en desktop */}
+          <div className='w-full max-w-md bg-white rounded-2xl p-5 shadow-2xl my-4 lg:bg-transparent lg:shadow-none lg:rounded-none lg:p-0 lg:my-0'>
 
             <div className='mb-5'>
               <span className='inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3'

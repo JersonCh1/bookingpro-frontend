@@ -1,9 +1,12 @@
-import { Calendar, CheckCircle, Clock, TrendingUp, ExternalLink, ArrowRight } from 'lucide-react'
+import { Calendar, CheckCircle, Clock, TrendingUp, ExternalLink, ArrowRight, Copy, Check } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useStats } from '../../hooks/useBookings'
 import { useAuthStore } from '../../store/authStore'
 import { StatusBadge } from '../../components/ui/Badge'
 import { formatDate, formatTime, formatCurrency } from '../../utils/helpers'
+import client from '../../api/client'
 
 function StatCard({ title, value, subtitle, icon: Icon, colorClass }) {
   return (
@@ -22,9 +25,102 @@ function SkeletonCard() {
   return <div className='card p-5 h-28 skeleton-shimmer' />
 }
 
+function OnboardingBanner({ tenant }) {
+  const [copied, setCopied] = useState(false)
+  const bookingUrl = `${window.location.origin}/book/${tenant?.slug}`
+
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(bookingUrl)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2500)
+    } catch {
+      // fallback silencioso
+    }
+  }
+
+  const steps = [
+    {
+      done: false,
+      label: 'Crear primer servicio',
+      sub: 'Define los servicios que ofreces y sus precios',
+      to: '/dashboard/services',
+      isLink: true,
+    },
+    {
+      done: false,
+      label: 'Verificar tus horarios',
+      sub: 'Configura los días y horas en que atiendes',
+      to: '/dashboard/scheduling',
+      isLink: true,
+    },
+    {
+      done: false,
+      label: 'Copiar tu enlace de reservas',
+      sub: bookingUrl,
+      isLink: false,
+      onAction: copyLink,
+      copied,
+    },
+  ]
+
+  return (
+    <div className='rounded-2xl p-5 mb-2' style={{ backgroundColor: '#fef7f7', border: '1px solid #fde8e8' }}>
+      <div className='flex items-center gap-2 mb-4'>
+        <span className='text-lg'>🚀</span>
+        <div>
+          <p className='font-black text-gray-900 text-sm'>Configura tu negocio en 3 pasos</p>
+          <p className='text-xs text-gray-400'>Completa la configuración para empezar a recibir reservas</p>
+        </div>
+      </div>
+      <div className='space-y-2'>
+        {steps.map((s, i) => (
+          <div key={i} className='flex items-center gap-3 p-3 rounded-xl bg-white border border-gray-100'>
+            <div className='w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-black'
+              style={{ backgroundColor: 'rgba(192,57,43,0.1)', color: '#C0392B' }}>
+              {i + 1}
+            </div>
+            <div className='flex-1 min-w-0'>
+              <p className='text-sm font-bold text-gray-900'>{s.label}</p>
+              <p className='text-xs text-gray-400 truncate'>{s.sub}</p>
+            </div>
+            {s.isLink ? (
+              <Link to={s.to}
+                className='flex-shrink-0 text-xs font-bold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1'
+                style={{ backgroundColor: '#C0392B', color: 'white' }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#922B21' }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#C0392B' }}
+              >
+                Ir <ArrowRight className='w-3 h-3' />
+              </Link>
+            ) : (
+              <button onClick={s.onAction}
+                className='flex-shrink-0 text-xs font-bold px-3 py-1.5 rounded-lg transition-all flex items-center gap-1'
+                style={{ backgroundColor: s.copied ? '#16a34a' : '#C0392B', color: 'white' }}
+              >
+                {s.copied ? <><Check className='w-3 h-3' /> Copiado</> : <><Copy className='w-3 h-3' /> Copiar</>}
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function Overview() {
   const { data: stats, isLoading } = useStats()
   const { tenant } = useAuthStore()
+
+  const { data: servicesData } = useQuery({
+    queryKey: ['services-overview'],
+    queryFn:  () => client.get('/services/').then(r => r.data.data),
+    staleTime: 30000,
+  })
+  const serviceCount = Array.isArray(servicesData)
+    ? servicesData.length
+    : (servicesData?.results?.length ?? servicesData?.count ?? null)
+  const showOnboarding = serviceCount === 0
 
   const todayTotal   = stats?.today?.total ?? 0
   const todayPending = stats?.today?.by_status?.pending   ?? 0
@@ -40,6 +136,9 @@ export default function Overview() {
 
   return (
     <div className='space-y-6'>
+
+      {/* Banner de onboarding — desaparece cuando hay servicios */}
+      {showOnboarding && tenant?.slug && <OnboardingBanner tenant={tenant} />}
 
       {/* Cabecera con bienvenida */}
       <div className='flex items-start justify-between gap-4'>

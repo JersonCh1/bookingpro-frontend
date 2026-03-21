@@ -68,40 +68,35 @@ function Field({ label, error, ...props }) {
 export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(schema) })
   const { mutate, isPending, error } = useLogin()
-  const msg = error?.response?.data?.error ?? null
+
+  // Mensaje de error: 401 → credenciales incorrectas, otro → mensaje del API
+  const apiMsg = error?.response?.status === 401
+    ? 'Credenciales incorrectas. Verifica tu email y contraseña.'
+    : (error?.response?.data?.error ?? null)
 
   return (
     <div className='flex min-h-screen lg:h-screen' style={{ backgroundColor: '#0D0D0D' }}>
 
       {/* ══════════════════════════════
-          PANEL IZQUIERDO — Marketing
+          PANEL IZQUIERDO — Marketing (solo desktop)
       ══════════════════════════════ */}
       <div className='hidden lg:flex lg:w-[52%] flex-col overflow-hidden relative px-14 py-10'>
 
-        {/* Grid animado */}
         <div className='absolute inset-0 pointer-events-none' style={{
           backgroundImage: `linear-gradient(rgba(192,57,43,0.06) 1px,transparent 1px),
             linear-gradient(90deg,rgba(192,57,43,0.06) 1px,transparent 1px)`,
           backgroundSize: '44px 44px',
         }} />
-
-        {/* Glow central animado */}
         <div className='glow-breathe absolute inset-0 pointer-events-none' style={{
           background: 'radial-gradient(ellipse at 30% 50%, rgba(192,57,43,0.15) 0%, transparent 58%)',
         }} />
-
-        {/* Segundo glow esquina */}
         <div className='glow-breathe-slow absolute pointer-events-none' style={{
           top: '60%', right: '-10%', width: '50%', height: '50%',
           background: 'radial-gradient(circle, rgba(192,57,43,0.07) 0%, transparent 65%)',
         }} />
-
-        {/* Vignette edges */}
         <div className='absolute inset-0 pointer-events-none' style={{
           background: 'radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0,0,0,0.5) 100%)',
         }} />
-
-        {/* Partículas */}
         {PARTICLES.map(p => (
           <span key={p.id} className='particle' style={{
             width: p.size, height: p.size, left: p.left, top: p.top,
@@ -109,21 +104,16 @@ export default function Login() {
           }} />
         ))}
 
-        {/* Contenido */}
         <div className='relative z-10 flex-1 flex flex-col justify-center'>
           <div className='grow-line h-px mb-8' style={{ backgroundColor: '#C0392B' }} />
-
           <h1 className='text-4xl xl:text-5xl font-black text-white leading-[1.05] mb-4 tracking-tight'>
             Tu negocio<br />nunca duerme.
           </h1>
-
           <div className='overflow-hidden mb-10'>
             <p className='typing-text text-sm font-semibold' style={{ color: '#C0392B' }}>
               Reservas automáticas 24/7.
             </p>
           </div>
-
-          {/* Stats */}
           <div className='flex gap-10 mb-8'>
             {STATS.map(s => (
               <div key={s.label}>
@@ -134,8 +124,6 @@ export default function Login() {
               </div>
             ))}
           </div>
-
-          {/* Chips */}
           <div className='flex flex-wrap gap-2 mb-8'>
             {CHIPS.map(c => (
               <span key={c}
@@ -146,20 +134,16 @@ export default function Login() {
               >{c}</span>
             ))}
           </div>
-
-          {/* Precio */}
           <div className='rounded-2xl p-5 mb-8' style={{ backgroundColor: '#111', border: '1px solid #C0392B22' }}>
             <p className='text-[10px] font-bold uppercase tracking-widest mb-2' style={{ color: '#C0392B' }}>
               ✦ Precio único en Perú
             </p>
             <div className='flex items-baseline gap-2 mb-1'>
-              <span className='text-3xl font-black text-white'>S/. 50</span>
+              <span className='text-3xl font-black text-white'>S/. 80</span>
               <span className='text-sm font-medium' style={{ color: '#777' }}>/&nbsp;mes</span>
             </div>
             <p className='text-xs' style={{ color: '#666' }}>Sin contrato · Cancela cuando quieras</p>
           </div>
-
-          {/* Testimonial */}
           <blockquote className='pl-4 text-xs italic leading-relaxed' style={{ color: '#777', borderLeft: '2px solid #3A3A3A' }}>
             "Antes perdíamos citas por no contestar. Ahora todo es automático."
             <span className='block mt-1 not-italic' style={{ color: '#555' }}>— Cliente desde 2024 · Arequipa</span>
@@ -174,26 +158,26 @@ export default function Login() {
       {/* ══════════════════════════════
           PANEL DERECHO — Formulario
       ══════════════════════════════ */}
-      <div className='w-full lg:w-[48%] flex flex-col relative overflow-hidden bg-white'>
+      <div className='w-full lg:w-[48%] flex flex-col relative overflow-hidden bg-[#0D0D0D] lg:bg-white'>
 
-        {/* Efectos fondo panel derecho */}
-        <div className='absolute top-0 left-0 right-0 h-[2px] pointer-events-none' style={{
+        {/* Efectos fondo (solo desktop) */}
+        <div className='hidden lg:block absolute top-0 left-0 right-0 h-[2px] pointer-events-none' style={{
           background: 'linear-gradient(90deg, transparent, #C0392B 40%, #E74C3C 60%, transparent)',
         }} />
-        <div className='absolute -top-40 -right-40 w-[28rem] h-[28rem] rounded-full pointer-events-none' style={{
+        <div className='hidden lg:block absolute -top-40 -right-40 w-[28rem] h-[28rem] rounded-full pointer-events-none' style={{
           background: 'radial-gradient(circle, rgba(192,57,43,0.06) 0%, transparent 65%)',
         }} />
-        <div className='absolute -bottom-32 -left-32 w-80 h-80 rounded-full pointer-events-none' style={{
+        <div className='hidden lg:block absolute -bottom-32 -left-32 w-80 h-80 rounded-full pointer-events-none' style={{
           background: 'radial-gradient(circle, rgba(192,57,43,0.04) 0%, transparent 65%)',
         }} />
-        <div className='absolute inset-0 pointer-events-none' style={{
+        <div className='hidden lg:block absolute inset-0 pointer-events-none' style={{
           backgroundImage: 'radial-gradient(rgba(192,57,43,0.08) 1px, transparent 1px)',
           backgroundSize: '28px 28px',
           opacity: 0.6,
         }} />
 
-        {/* ── Header: sticky, fondo sólido, z-20 ── */}
-        <header className='header-enter sticky top-0 z-20 flex-shrink-0 flex items-center justify-between px-8 py-3'
+        {/* Header */}
+        <header className='header-enter sticky top-0 z-20 flex-shrink-0 flex items-center justify-between px-6 sm:px-8 py-3'
           style={{
             backgroundColor: 'rgba(255,255,255,0.96)',
             backdropFilter: 'blur(16px)',
@@ -216,11 +200,11 @@ export default function Login() {
           </Link>
         </header>
 
-        {/* ── Contenido del formulario ── */}
-        <div className='panel-enter relative z-10 flex-1 flex items-center justify-center px-8 py-10'>
-          <div className='w-full max-w-sm'>
+        {/* Contenido */}
+        <div className='panel-enter relative z-10 flex-1 flex items-center justify-center px-4 sm:px-8 py-10'>
+          {/* Card: blanco en móvil (sobre fondo negro), transparente en desktop */}
+          <div className='w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl lg:bg-transparent lg:shadow-none lg:rounded-none lg:p-0'>
 
-            {/* Encabezado */}
             <div className='form-item-1 mb-8'>
               <span className='inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3'
                 style={{ backgroundColor: 'rgba(192,57,43,0.08)', color: '#C0392B' }}>
@@ -233,14 +217,15 @@ export default function Login() {
               <p className='text-sm text-gray-400 mt-1'>Ingresa tus credenciales para continuar</p>
             </div>
 
-            {msg && (
+            {apiMsg && (
               <div className='mb-6 p-4 rounded-xl flex gap-3 bg-red-50 border border-red-100'>
                 <span className='text-red-400'>⚠</span>
-                <p className='text-sm text-red-700 font-medium'>{msg}</p>
+                <p className='text-sm text-red-700 font-medium'>{apiMsg}</p>
               </div>
             )}
 
-            <form onSubmit={handleSubmit(d => mutate(d))} className='space-y-5'>
+            {/* noValidate evita validación HTML5 del browser */}
+            <form noValidate onSubmit={handleSubmit(d => mutate(d))} className='space-y-5'>
               <div className='form-item-2'>
                 <Field label='Correo electrónico' type='email' placeholder='tu@negocio.com'
                   autoComplete='email' error={errors.email?.message} {...register('email')} />

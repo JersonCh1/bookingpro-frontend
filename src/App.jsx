@@ -12,8 +12,9 @@ import Staff       from './pages/dashboard/Staff'
 import Scheduling  from './pages/dashboard/Scheduling'
 import Settings    from './pages/dashboard/Settings'
 
-import BookingPage  from './pages/public/BookingPage'
-import LandingPage  from './pages/public/LandingPage'
+import BookingPage from './pages/public/BookingPage'
+import Landing     from './pages/Landing'
+import NotFound    from './pages/NotFound'
 
 function PrivateRoute({ children }) {
   const { token } = useAuthStore()
@@ -29,21 +30,26 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Públicas (redirigen a dashboard si ya está logueado) */}
+        <Route path='/'         element={<PublicRoute><Landing /></PublicRoute>} />
         <Route path='/login'    element={<PublicRoute><Login /></PublicRoute>} />
         <Route path='/register' element={<PublicRoute><Register /></PublicRoute>} />
 
+        {/* Dashboard (requiere auth) */}
         <Route path='/dashboard' element={<PrivateRoute><DashboardLayout /></PrivateRoute>}>
-          <Route index                   element={<Overview />} />
-          <Route path='bookings'         element={<Bookings />} />
-          <Route path='services'         element={<Services />} />
-          <Route path='staff'            element={<Staff />} />
-          <Route path='scheduling'       element={<Scheduling />} />
-          <Route path='settings'         element={<Settings />} />
+          <Route index               element={<Overview />} />
+          <Route path='bookings'     element={<Bookings />} />
+          <Route path='services'     element={<Services />} />
+          <Route path='staff'        element={<Staff />} />
+          <Route path='scheduling'   element={<Scheduling />} />
+          <Route path='settings'     element={<Settings />} />
         </Route>
 
+        {/* Página pública de reservas (sin auth) */}
         <Route path='/book/:slug' element={<BookingPage />} />
-        <Route path='/'        element={<PublicRoute><LandingPage /></PublicRoute>} />
-        <Route path='*'        element={<Navigate to='/' replace />} />
+
+        {/* 404 — catch-all */}
+        <Route path='*' element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   )

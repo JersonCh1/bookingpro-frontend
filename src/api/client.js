@@ -36,8 +36,14 @@ client.interceptors.response.use(
   async (error) => {
     const original = error.config
 
-    // Solo intentar refresh una vez por request fallido
-    if (error.response?.status === 401 && !original._retry) {
+    // No interceptar 401 en endpoints de auth (login/register/refresh)
+    const isAuthEndpoint =
+      original.url?.includes('/auth/login')    ||
+      original.url?.includes('/auth/register') ||
+      original.url?.includes('/auth/refresh')
+
+    // Solo intentar refresh una vez por request fallido, nunca en endpoints de auth
+    if (error.response?.status === 401 && !original._retry && !isAuthEndpoint) {
       original._retry = true
 
       const refreshToken = useAuthStore.getState().refreshToken
