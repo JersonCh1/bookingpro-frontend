@@ -301,7 +301,7 @@ export default function LandingPage() {
       {/* ════════ NAVBAR ════════ */}
       <nav className='sticky top-0 z-50' style={{ backgroundColor: '#0D0D0D', borderBottom: '1px solid #1A1A1A' }}>
         <div className='max-w-7xl mx-auto px-5 h-16 flex items-center justify-between'>
-          <LogoFull height={36} dark />
+          <LogoFull height={44} dark />
 
           {/* Desktop nav */}
           <div className='hidden md:flex items-center gap-8'>
