@@ -51,19 +51,18 @@ function CountUp({ target, suffix = '' }) {
   return <span ref={ref}>0{suffix}</span>
 }
 
-function Field({ label, error, ...props }) {
+function FieldWrap({ label, error, children }) {
   return (
     <div>
       <label className='block text-xs font-semibold text-gray-500 mb-2 tracking-wide'>{label}</label>
-      <input
-        className={`auth-input w-full px-4 py-3 rounded-xl text-sm text-gray-900 font-medium bg-gray-50 border placeholder:text-gray-300
-          ${error ? 'border-red-300' : 'border-gray-200'}`}
-        {...props}
-      />
+      {children}
       {error && <p className='mt-1.5 text-xs text-red-500 font-medium'>{error}</p>}
     </div>
   )
 }
+
+const inputCls = (err) =>
+  `auth-input w-full px-4 py-3 rounded-xl text-sm text-gray-900 font-medium bg-gray-50 border placeholder:text-gray-300 ${err ? 'border-red-300' : 'border-gray-200'}`
 
 export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(schema) })
@@ -224,15 +223,21 @@ export default function Login() {
               </div>
             )}
 
-            {/* noValidate evita validación HTML5 del browser */}
+            {/* noValidate + register directo en <input> para que RHF lea el ref correctamente */}
             <form noValidate onSubmit={handleSubmit(d => mutate(d))} className='space-y-5'>
               <div className='form-item-2'>
-                <Field label='Correo electrónico' type='email' placeholder='tu@negocio.com'
-                  autoComplete='email' error={errors.email?.message} {...register('email')} />
+                <FieldWrap label='Correo electrónico' error={errors.email?.message}>
+                  <input type='email' placeholder='tu@negocio.com' autoComplete='email'
+                    className={inputCls(errors.email)}
+                    {...register('email')} />
+                </FieldWrap>
               </div>
               <div className='form-item-3'>
-                <Field label='Contraseña' type='password' placeholder='••••••••'
-                  autoComplete='current-password' error={errors.password?.message} {...register('password')} />
+                <FieldWrap label='Contraseña' error={errors.password?.message}>
+                  <input type='password' placeholder='••••••••' autoComplete='current-password'
+                    className={inputCls(errors.password)}
+                    {...register('password')} />
+                </FieldWrap>
               </div>
 
               <div className='form-item-4'>
