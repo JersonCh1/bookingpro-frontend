@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom'
 import { useAuthStore } from './store/authStore'
 
 import Login    from './pages/auth/Login'
@@ -16,6 +16,11 @@ import BookingPage from './pages/public/BookingPage'
 import Landing     from './pages/Landing'
 import NotFound    from './pages/NotFound'
 
+function RedirectToBook() {
+  const { slug } = useParams()
+  return <Navigate to={`/book/${slug}`} replace />
+}
+
 function PrivateRoute({ children }) {
   const { token } = useAuthStore()
   return token ? children : <Navigate to='/login' replace />
@@ -32,6 +37,8 @@ export default function App() {
       <Routes>
         {/* Página pública de reservas (sin auth) — primero para evitar conflictos */}
         <Route path='/book/:slug' element={<BookingPage />} />
+        {/* Redirect de ruta vieja /b/:slug → /book/:slug */}
+        <Route path='/b/:slug' element={<RedirectToBook />} />
 
         {/* Públicas (redirigen a dashboard si ya está logueado) */}
         <Route path='/'         element={<PublicRoute><Landing /></PublicRoute>} />

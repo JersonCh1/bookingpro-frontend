@@ -44,7 +44,7 @@ export default function Settings() {
     onSuccess:  (data) => updateTenant(data),
   })
 
-  const publicUrl = `${window.location.origin}/b/${tenant?.slug}`
+  const publicUrl = `${window.location.origin}/book/${tenant?.slug}`
 
   const copyUrl = () => {
     navigator.clipboard.writeText(publicUrl)
