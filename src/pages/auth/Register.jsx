@@ -2,11 +2,12 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link } from 'react-router-dom'
-import { CheckCircle, Loader2 } from 'lucide-react'
+import { CheckCircle, Loader2, ArrowRight } from 'lucide-react'
 import { useRegister } from '../../hooks/useAuth'
 import Input from '../../components/ui/Input'
 import Select from '../../components/ui/Select'
 import { LogoFull } from '../../components/ui/Logo'
+import { useEffect, useRef } from 'react'
 
 const schema = z.object({
   name:          z.string().min(2, 'Mínimo 2 caracteres'),
@@ -22,25 +23,69 @@ const schema = z.object({
 const BUSINESS_TYPES = [
   { value: 'salon',       label: 'Salón de Belleza' },
   { value: 'barberia',    label: 'Barbería' },
-  { value: 'spa',         label: 'Spa' },
+  { value: 'spa',         label: 'Spa / Centro de estética' },
   { value: 'consultorio', label: 'Consultorio Médico' },
   { value: 'estudio',     label: 'Estudio (fotos/arte)' },
   { value: 'gym',         label: 'Gimnasio / Fitness' },
-  { value: 'otro',        label: 'Otro' },
+  { value: 'otro',        label: 'Otro tipo de negocio' },
 ]
+
+/* ── Partículas flotantes — mismas que Login ── */
+const PARTICLES = Array.from({ length: 20 }, (_, i) => ({
+  id:       i,
+  left:     `${(i * 5.3 + 7) % 94}%`,
+  top:      `${(i * 6.7 + 11) % 83}%`,
+  size:     i % 3 === 0 ? 5 : i % 3 === 1 ? 3 : 4,
+  duration: `${4.5 + (i % 5) * 1.3}s`,
+  delay:    `${(i * 0.55) % 4.2}s`,
+}))
 
 const BENEFITS = [
-  { text: 'Configura tu perfil en menos de 2 minutos' },
-  { text: 'Tus clientes reservan solos, sin llamadas' },
-  { text: 'Notificaciones automáticas por WhatsApp' },
-  { text: 'Sin contratos · Cancela cuando quieras' },
+  'Reservas online 24/7 sin llamadas',
+  'Configura servicios y horarios en minutos',
+  'Notificaciones automáticas por WhatsApp',
+  'Panel completo para gestionar todo',
 ]
 
-const STEPS = [
-  { n: 1, label: 'Crea tu negocio' },
-  { n: 2, label: 'Agrega servicios' },
-  { n: 3, label: 'Comparte tu link' },
+const INDUSTRIES = [
+  { icon: '✂', label: 'Barberías' },
+  { icon: '💅', label: 'Salones' },
+  { icon: '🏥', label: 'Consultorios' },
+  { icon: '🐾', label: 'Veterinarias' },
 ]
+
+/* ── Counter-up (igual que Login) ── */
+function CountUp({ target, suffix = '' }) {
+  const ref  = useRef(null)
+  const raf  = useRef(null)
+  const done = useRef(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !done.current) {
+        done.current = true
+        const t0 = performance.now()
+        const tick = (now) => {
+          const p = Math.min((now - t0) / 1600, 1)
+          const eased = 1 - Math.pow(1 - p, 3)
+          el.textContent = Math.floor(eased * target) + suffix
+          if (p < 1) raf.current = requestAnimationFrame(tick)
+        }
+        raf.current = requestAnimationFrame(tick)
+        observer.disconnect()
+      }
+    }, { threshold: 0.3 })
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      if (raf.current) cancelAnimationFrame(raf.current)
+    }
+  }, [target, suffix])
+
+  return <span ref={ref}>0{suffix}</span>
+}
 
 export default function Register() {
   const { register, handleSubmit, formState: { errors } } = useForm({
@@ -54,9 +99,9 @@ export default function Register() {
     <div className='min-h-screen flex' style={{ backgroundColor: '#0D0D0D' }}>
 
       {/* ══════════════════════════════════════
-          LEFT PANEL — 42% dark
+          LEFT PANEL — 45% dark con todos los efectos
       ══════════════════════════════════════ */}
-      <div className='hidden lg:flex lg:w-[42%] flex-col justify-between p-12 relative overflow-hidden'>
+      <div className='hidden lg:flex lg:w-[45%] flex-col justify-between p-14 relative overflow-hidden'>
 
         {/* Grid pattern */}
         <div className='absolute inset-0 pointer-events-none' style={{
@@ -67,232 +112,338 @@ export default function Register() {
           backgroundSize: '40px 40px',
         }} />
 
-        {/* Glow blob */}
+        {/* Radial glow blob */}
         <div className='absolute inset-0 pointer-events-none' style={{
-          background: 'radial-gradient(ellipse at 20% 60%, rgba(192,57,43,0.1) 0%, transparent 60%)',
+          background: 'radial-gradient(ellipse at 25% 55%, rgba(192,57,43,0.1) 0%, transparent 65%)',
         }} />
+
+        {/* Partículas flotantes */}
+        {PARTICLES.map(p => (
+          <span
+            key={p.id}
+            className='particle'
+            style={{
+              width:             p.size,
+              height:            p.size,
+              left:              p.left,
+              top:               p.top,
+              animationDuration: p.duration,
+              animationDelay:    p.delay,
+            }}
+          />
+        ))}
 
         {/* Logo */}
         <div className='relative z-10'>
-          <LogoFull height={38} variant='light' />
+          <LogoFull height={40} variant='light' />
         </div>
 
-        {/* Copy */}
+        {/* Copy central */}
         <div className='relative z-10'>
-          <div className='grow-line h-0.5 mb-7' style={{ backgroundColor: '#C0392B' }} />
+          <div className='grow-line h-0.5 mb-8' style={{ backgroundColor: '#C0392B' }} />
 
-          <h2 className='text-3xl font-black text-white leading-tight mb-3 tracking-tight'>
-            Únete a los mejores<br />negocios del Perú
-          </h2>
-          <p className='text-sm text-gray-500 mb-8 leading-relaxed'>
-            Más de 500 negocios ya confían en AgendaYa<br />para gestionar sus reservas.
-          </p>
+          <h1 className='text-4xl font-black text-white leading-[1.05] mb-4 tracking-tight'>
+            Únete a los mejores<br />negocios del Perú.
+          </h1>
+
+          {/* Typing subtitle — exactamente 26 chars */}
+          <div className='overflow-hidden mb-10'>
+            <p className='typing-text text-sm font-semibold' style={{ color: '#C0392B' }}>
+              2 minutos y listo. Gratis.
+            </p>
+          </div>
+
+          {/* Stats con counter-up */}
+          <div className='flex gap-8 mb-10'>
+            <div>
+              <p className='text-3xl font-black' style={{ color: '#C0392B' }}>
+                <CountUp target={500} suffix='+' />
+              </p>
+              <p className='text-xs text-gray-500 mt-1 font-medium'>negocios activos</p>
+            </div>
+            <div>
+              <p className='text-3xl font-black' style={{ color: '#C0392B' }}>
+                <CountUp target={2} suffix=' min' />
+              </p>
+              <p className='text-xs text-gray-500 mt-1 font-medium'>para configurar</p>
+            </div>
+            <div>
+              <p className='text-3xl font-black' style={{ color: '#C0392B' }}>24/7</p>
+              <p className='text-xs text-gray-500 mt-1 font-medium'>reservas online</p>
+            </div>
+          </div>
 
           {/* Benefits */}
-          <ul className='space-y-3.5 mb-10'>
+          <ul className='space-y-3 mb-10'>
             {BENEFITS.map(b => (
-              <li key={b.text} className='flex items-start gap-3'>
+              <li key={b} className='flex items-start gap-3'>
                 <CheckCircle className='w-4 h-4 flex-shrink-0 mt-0.5' style={{ color: '#C0392B' }} />
-                <span className='text-sm text-gray-400 leading-snug'>{b.text}</span>
+                <span className='text-sm text-gray-400 leading-snug'>{b}</span>
               </li>
             ))}
           </ul>
 
-          {/* 3-step flow */}
-          <div className='space-y-3'>
-            <p className='text-[10px] font-bold uppercase tracking-widest mb-3' style={{ color: '#4A4A4A' }}>
-              Así de fácil
-            </p>
-            {STEPS.map(s => (
-              <div key={s.n} className='flex items-center gap-3'>
-                <div
-                  className='w-6 h-6 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0'
-                  style={{ backgroundColor: '#1A1A1A', color: '#C0392B', border: '1px solid #C0392B' }}
-                >
-                  {s.n}
-                </div>
-                <span className='text-sm text-gray-400'>{s.label}</span>
-              </div>
+          {/* Industry chips */}
+          <div className='flex flex-wrap gap-2'>
+            {INDUSTRIES.map(({ icon, label }) => (
+              <span
+                key={label}
+                className='inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition-colors cursor-default'
+                style={{ backgroundColor: '#141414', color: '#6b7280', border: '1px solid #1f1f1f' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#C0392B'; e.currentTarget.style.color = '#E74C3C' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#1f1f1f'; e.currentTarget.style.color = '#6b7280' }}
+              >
+                <span>{icon}</span> {label}
+              </span>
             ))}
           </div>
         </div>
 
-        {/* Price card */}
+        {/* Precio + footer */}
         <div className='relative z-10'>
+          {/* Precio */}
           <div
-            className='p-4 rounded-2xl'
-            style={{ backgroundColor: '#0D0D0D', border: '1px solid #1A1A1A' }}
+            className='p-4 rounded-2xl mb-5'
+            style={{ backgroundColor: '#111', border: '1px solid #1A1A1A' }}
           >
             <p className='text-[10px] font-bold uppercase tracking-widest mb-1' style={{ color: '#4A4A4A' }}>
-              Precio único
+              Precio único en Perú
             </p>
             <div className='flex items-baseline gap-1.5'>
               <span className='text-2xl font-black text-white'>S/. 80</span>
-              <span className='text-sm text-gray-500'>/ mes</span>
+              <span className='text-sm text-gray-600'>/ mes</span>
             </div>
             <p className='text-xs mt-1' style={{ color: '#4A4A4A' }}>
               Sin contrato · Cancela cuando quieras
             </p>
           </div>
-          <p className='mt-4 text-xs' style={{ color: '#2C2C2C' }}>
+
+          {/* Testimonial */}
+          <blockquote
+            className='pl-4 text-xs text-gray-600 italic leading-relaxed mb-4'
+            style={{ borderLeft: '2px solid #C0392B' }}
+          >
+            "Pasé de perder clientes por teléfono a tener el calendario lleno automáticamente."
+          </blockquote>
+
+          <p className='text-xs' style={{ color: '#2C2C2C' }}>
             © {new Date().getFullYear()} AgendaYa · Hecho en Perú
           </p>
         </div>
       </div>
 
       {/* ══════════════════════════════════════
-          RIGHT PANEL — 58% cream, form
+          RIGHT PANEL — 55% cream, formulario
       ══════════════════════════════════════ */}
       <div
-        className='w-full lg:w-[58%] flex items-start justify-center px-8 py-10 overflow-y-auto relative'
+        className='w-full lg:w-[55%] flex flex-col overflow-y-auto relative'
         style={{ backgroundColor: '#F5F0EB' }}
       >
-        {/* Corner decoration */}
+        {/* Decoración corner */}
+        <div className='absolute top-0 right-0 w-56 h-56 pointer-events-none' style={{
+          background: 'radial-gradient(circle at top right, rgba(192,57,43,0.09), transparent 70%)',
+        }} />
+
+        {/* ── TOP BAR — siempre visible, sticky ── */}
         <div
-          className='absolute top-0 right-0 w-48 h-48 pointer-events-none opacity-50'
-          style={{
-            background: 'radial-gradient(circle at top right, rgba(192,57,43,0.1), transparent 70%)',
-          }}
-        />
-
-        <div className='w-full max-w-lg relative z-10'>
-
-          {/* Mobile logo */}
-          <div className='lg:hidden flex justify-center mb-6'>
-            <LogoFull height={34} />
+          className='sticky top-0 z-20 flex items-center justify-between px-8 py-3'
+          style={{ backgroundColor: 'rgba(245,240,235,0.92)', backdropFilter: 'blur(8px)', borderBottom: '1px solid rgba(0,0,0,0.06)' }}
+        >
+          {/* Logo móvil */}
+          <div className='lg:hidden'>
+            <LogoFull height={28} />
           </div>
+          <div className='hidden lg:block' />
 
-          <p className='text-[10px] font-bold uppercase tracking-widest mb-1.5' style={{ color: '#C0392B' }}>
-            Crear cuenta gratis
-          </p>
-          <h2 className='text-2xl font-black text-gray-900 mb-1 tracking-tight'>
-            Empieza en 2 minutos
-          </h2>
-          <p className='text-sm text-gray-400 mb-7'>
-            Sin tarjeta de crédito · Sin compromisos
-          </p>
-
-          {errorMessage && (
-            <div className='mb-5 p-3.5 rounded-xl flex items-start gap-3 bg-red-50 border border-red-100'>
-              <span className='text-red-400 mt-0.5'>⚠</span>
-              <p className='text-sm text-red-700 font-medium'>{errorMessage}</p>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-4'>
-
-            {/* Section label */}
-            <p className='text-[10px] font-bold text-gray-400 uppercase tracking-widest pt-1'>
-              Información del negocio
-            </p>
-
-            <Input
-              label='Nombre del negocio'
-              placeholder='Ej: Barbería El Corte'
-              error={errors.name?.message}
-              {...register('name')}
-            />
-
-            <div className='grid grid-cols-2 gap-3'>
-              <Select
-                label='Tipo de negocio'
-                error={errors.business_type?.message}
-                {...register('business_type')}
-              >
-                <option value=''>Seleccionar...</option>
-                {BUSINESS_TYPES.map(t => (
-                  <option key={t.value} value={t.value}>{t.label}</option>
-                ))}
-              </Select>
-              <Input
-                label='Ciudad'
-                placeholder='Arequipa'
-                {...register('city')}
-              />
-            </div>
-
-            <Input
-              label='Teléfono / WhatsApp'
-              placeholder='+51 987 654 321'
-              type='tel'
-              error={errors.phone?.message}
-              {...register('phone')}
-            />
-
-            {/* Section label */}
-            <p className='text-[10px] font-bold text-gray-400 uppercase tracking-widest pt-3'>
-              Tu cuenta de acceso
-            </p>
-
-            <div className='grid grid-cols-2 gap-3'>
-              <Input
-                label='Nombre'
-                placeholder='Juan'
-                error={errors.first_name?.message}
-                {...register('first_name')}
-              />
-              <Input
-                label='Apellido'
-                placeholder='Pérez'
-                error={errors.last_name?.message}
-                {...register('last_name')}
-              />
-            </div>
-
-            <Input
-              label='Correo electrónico'
-              type='email'
-              placeholder='tu@email.com'
-              autoComplete='email'
-              error={errors.email?.message}
-              {...register('email')}
-            />
-
-            <Input
-              label='Contraseña'
-              type='password'
-              placeholder='Mínimo 8 caracteres'
-              autoComplete='new-password'
-              error={errors.password?.message}
-              {...register('password')}
-            />
-
-            <button
-              type='submit'
-              disabled={isPending}
-              className='shimmer-btn w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60 flex items-center justify-center gap-2 mt-2'
-              style={{ backgroundColor: '#C0392B' }}
-              onMouseEnter={e => !isPending && (e.currentTarget.style.backgroundColor = '#A93226')}
-              onMouseLeave={e => !isPending && (e.currentTarget.style.backgroundColor = '#C0392B')}
+          {/* CTA iniciar sesión — SIEMPRE VISIBLE */}
+          <div className='flex items-center gap-3'>
+            <span className='text-sm text-gray-400 hidden sm:block'>¿Ya tienes cuenta?</span>
+            <Link
+              to='/login'
+              className='inline-flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-lg transition-all'
+              style={{ backgroundColor: '#0D0D0D', color: 'white' }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#C0392B' }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#0D0D0D' }}
             >
-              {isPending
-                ? <><Loader2 className='w-4 h-4 animate-spin' /> Creando cuenta...</>
-                : 'Crear cuenta gratis →'
-              }
-            </button>
+              Iniciar sesión <ArrowRight className='w-3.5 h-3.5' />
+            </Link>
+          </div>
+        </div>
 
-            <p className='text-[11px] text-center text-gray-400 leading-relaxed'>
-              Al registrarte aceptas los{' '}
-              <span className='underline cursor-pointer' style={{ color: '#C0392B' }}>
-                términos de servicio
-              </span>{' '}
-              y la política de privacidad.
-            </p>
-          </form>
+        {/* ── Contenido del formulario ── */}
+        <div className='flex-1 flex items-start justify-center px-8 py-8'>
+          <div className='w-full max-w-lg relative z-10'>
 
-          <div className='mt-6 pt-5' style={{ borderTop: '1px solid rgba(0,0,0,0.08)' }}>
-            <p className='text-center text-sm text-gray-400'>
-              ¿Ya tienes cuenta?{' '}
-              <Link
-                to='/login'
-                className='font-bold transition-colors'
-                style={{ color: '#C0392B' }}
-                onMouseEnter={e => { e.currentTarget.style.color = '#922B21' }}
-                onMouseLeave={e => { e.currentTarget.style.color = '#C0392B' }}
+            {/* Header */}
+            <div className='mb-6'>
+              <span
+                className='inline-block text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full mb-3'
+                style={{ backgroundColor: 'rgba(192,57,43,0.1)', color: '#C0392B' }}
               >
-                Inicia sesión
-              </Link>
-            </p>
+                ● Registro gratuito
+              </span>
+              <h2 className='text-2xl font-black text-gray-900 tracking-tight leading-tight'>
+                Crea tu cuenta en<br />menos de 2 minutos
+              </h2>
+              <p className='text-sm text-gray-400 mt-1.5'>
+                Sin tarjeta de crédito · Sin compromisos
+              </p>
+            </div>
+
+            {/* Error global */}
+            {errorMessage && (
+              <div className='mb-5 p-3.5 rounded-xl flex items-start gap-3 bg-red-50 border border-red-100'>
+                <span className='text-red-400 mt-0.5 text-sm'>⚠</span>
+                <p className='text-sm text-red-700 font-medium'>{errorMessage}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-5'>
+
+              {/* ─── Sección 1: Negocio ─── */}
+              <div
+                className='rounded-2xl p-5 space-y-4'
+                style={{ backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.07)' }}
+              >
+                <div className='flex items-center gap-2 mb-1'>
+                  <div
+                    className='w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white flex-shrink-0'
+                    style={{ backgroundColor: '#C0392B' }}
+                  >
+                    1
+                  </div>
+                  <p className='text-xs font-bold text-gray-500 uppercase tracking-wider'>
+                    Tu negocio
+                  </p>
+                </div>
+
+                <Input
+                  label='Nombre del negocio'
+                  placeholder='Ej: Barbería El Corte Fino'
+                  error={errors.name?.message}
+                  {...register('name')}
+                />
+
+                <div className='grid grid-cols-2 gap-3'>
+                  <Select
+                    label='Tipo de negocio'
+                    error={errors.business_type?.message}
+                    {...register('business_type')}
+                  >
+                    <option value=''>Seleccionar...</option>
+                    {BUSINESS_TYPES.map(t => (
+                      <option key={t.value} value={t.value}>{t.label}</option>
+                    ))}
+                  </Select>
+                  <Input
+                    label='Ciudad'
+                    placeholder='Arequipa'
+                    {...register('city')}
+                  />
+                </div>
+
+                <Input
+                  label='Teléfono / WhatsApp del negocio'
+                  placeholder='+51 987 654 321'
+                  type='tel'
+                  error={errors.phone?.message}
+                  {...register('phone')}
+                />
+              </div>
+
+              {/* ─── Sección 2: Cuenta ─── */}
+              <div
+                className='rounded-2xl p-5 space-y-4'
+                style={{ backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.07)' }}
+              >
+                <div className='flex items-center gap-2 mb-1'>
+                  <div
+                    className='w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white flex-shrink-0'
+                    style={{ backgroundColor: '#C0392B' }}
+                  >
+                    2
+                  </div>
+                  <p className='text-xs font-bold text-gray-500 uppercase tracking-wider'>
+                    Tu acceso
+                  </p>
+                </div>
+
+                <div className='grid grid-cols-2 gap-3'>
+                  <Input
+                    label='Nombre'
+                    placeholder='Juan'
+                    error={errors.first_name?.message}
+                    {...register('first_name')}
+                  />
+                  <Input
+                    label='Apellido'
+                    placeholder='Pérez'
+                    error={errors.last_name?.message}
+                    {...register('last_name')}
+                  />
+                </div>
+
+                <Input
+                  label='Correo electrónico'
+                  type='email'
+                  placeholder='tu@negocio.com'
+                  autoComplete='email'
+                  error={errors.email?.message}
+                  {...register('email')}
+                />
+
+                <Input
+                  label='Contraseña'
+                  type='password'
+                  placeholder='Mínimo 8 caracteres'
+                  autoComplete='new-password'
+                  error={errors.password?.message}
+                  {...register('password')}
+                />
+              </div>
+
+              {/* ─── Submit ─── */}
+              <button
+                type='submit'
+                disabled={isPending}
+                className='shimmer-btn w-full py-4 rounded-xl text-sm font-black text-white transition-all disabled:opacity-60 flex items-center justify-center gap-2'
+                style={{ backgroundColor: '#C0392B', letterSpacing: '0.01em' }}
+                onMouseEnter={e => !isPending && (e.currentTarget.style.backgroundColor = '#A93226')}
+                onMouseLeave={e => !isPending && (e.currentTarget.style.backgroundColor = '#C0392B')}
+              >
+                {isPending
+                  ? <><Loader2 className='w-4 h-4 animate-spin' /> Creando tu cuenta...</>
+                  : <>Crear cuenta gratis <ArrowRight className='w-4 h-4' /></>
+                }
+              </button>
+
+              <p className='text-[11px] text-center text-gray-400 leading-relaxed'>
+                Al registrarte aceptas los{' '}
+                <span className='underline cursor-pointer hover:text-primary-600 transition-colors' style={{ color: '#C0392B' }}>
+                  términos de servicio
+                </span>{' '}
+                y la política de privacidad.
+              </p>
+            </form>
+
+            {/* Footer link (refuerzo) */}
+            <div
+              className='mt-5 pt-4 text-center'
+              style={{ borderTop: '1px solid rgba(0,0,0,0.07)' }}
+            >
+              <p className='text-sm text-gray-400'>
+                ¿Ya tienes cuenta?{' '}
+                <Link
+                  to='/login'
+                  className='font-bold transition-colors'
+                  style={{ color: '#C0392B' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#922B21' }}
+                  onMouseLeave={e => { e.currentTarget.style.color = '#C0392B' }}
+                >
+                  Inicia sesión aquí →
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
       </div>
