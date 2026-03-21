@@ -117,7 +117,16 @@ export default function Bookings() {
       ) : bookings.length === 0 ? (
         <div className='card p-12 text-center'>
           <Calendar className='w-10 h-10 text-gray-200 mx-auto mb-3' />
-          <p className='text-gray-400 text-sm'>No hay reservas con estos filtros</p>
+          {(filters.status || filters.search || filters.date_from || filters.date_to) ? (
+            <p className='text-gray-400 text-sm'>No hay reservas con estos filtros</p>
+          ) : (
+            <>
+              <p className='text-gray-600 font-semibold text-sm mb-1'>Aún no tienes reservas</p>
+              <p className='text-gray-400 text-xs max-w-xs mx-auto'>
+                Comparte tu enlace de reservas con tus clientes para empezar a recibir citas.
+              </p>
+            </>
+          )}
         </div>
       ) : (
         <>

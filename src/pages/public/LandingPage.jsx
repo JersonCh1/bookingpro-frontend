@@ -79,7 +79,7 @@ const FEATURES = [
 ]
 
 const TESTIMONIALS = [
-  { name: 'María Quispe', role: 'Barbería El Estilo · Arequipa', rating: 5,
+  { name: 'María Quispe', role: 'Barbería El Estilo · Perú', rating: 5,
     quote: 'Desde que uso AgendaYa mis reservas aumentaron un 35%. Mis clientes ya no me llaman para agendar, lo hacen solos desde el link.' },
   { name: 'Carlos Mamani', role: 'Salón Glam · Lima', rating: 5,
     quote: 'Lo configuré en menos de 10 minutos. Ahora tengo el calendario lleno y no pierdo tiempo coordinando por WhatsApp.' },
@@ -374,7 +374,7 @@ export default function LandingPage() {
               <div className='inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6'
                 style={{ backgroundColor: 'rgba(192,57,43,0.12)', border: '1px solid rgba(192,57,43,0.25)' }}>
                 <span className='pulse-dot text-xs' style={{ color: '#C0392B' }}>●</span>
-                <span className='text-xs font-bold text-white'>Plataforma N°1 de reservas en Perú</span>
+                <span className='text-xs font-bold text-white'>La plataforma de reservas para negocios en Perú</span>
               </div>
 
               <h1 className='text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-[1.05] tracking-tight mb-5'>
@@ -432,7 +432,7 @@ export default function LandingPage() {
                     {[...Array(5)].map((_, i) => <Star key={i} className='w-3 h-3 fill-yellow-400 text-yellow-400' />)}
                   </div>
                   <p className='text-xs text-gray-500'>
-                    <span className='font-bold text-white'>+500 negocios</span> en todo Perú confían en AgendaYa
+                    Sé de los primeros en <span className='font-bold text-white'>automatizar tu negocio</span>
                   </p>
                 </div>
               </div>
@@ -487,14 +487,14 @@ export default function LandingPage() {
         <div className='max-w-4xl mx-auto px-5'>
           <div className='grid grid-cols-2 md:grid-cols-4 gap-8 text-center'>
             {[
-              { val: 500, suf: '+', label: 'Negocios activos' },
-              { val: 98,  suf: '%', label: 'Tasa de satisfacción' },
-              { val: 40,  suf: '%', label: 'Menos cancelaciones' },
-              { val: 2,   suf: ' min', label: 'Para configurar' },
+              { val: '2',   suf: ' min', label: 'Para configurar' },
+              { val: '24/7', suf: '',   label: 'Disponible sin parar' },
+              { val: '0',    suf: '',   label: 'Llamadas manuales' },
+              { val: '∞',    suf: '',   label: 'Reservas online' },
             ].map(s => (
               <FadeIn key={s.label}>
                 <p className='text-4xl font-black mb-1' style={{ color: '#C0392B' }}>
-                  <CountUp target={s.val} suffix={s.suf} />
+                  {s.val}{s.suf}
                 </p>
                 <p className='text-sm text-gray-500 font-medium'>{s.label}</p>
               </FadeIn>
@@ -612,12 +612,18 @@ export default function LandingPage() {
                 <p className='text-xs font-bold uppercase tracking-widest mb-3' style={{ color: '#C0392B' }}>
                   Plan único · Todo incluido
                 </p>
+                <div className='inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-3'
+                  style={{ backgroundColor: 'rgba(192,57,43,0.2)', border: '1px solid rgba(192,57,43,0.4)' }}>
+                  <span className='w-1.5 h-1.5 rounded-full animate-pulse' style={{ backgroundColor: '#E74C3C' }} />
+                  <span className='text-[10px] font-black uppercase tracking-widest' style={{ color: '#E74C3C' }}>Oferta de Lanzamiento</span>
+                </div>
                 <div className='flex items-baseline justify-center gap-1'>
                   <span className='text-2xl font-bold text-gray-400'>S/.</span>
-                  <span className='text-7xl font-black text-white'>80</span>
+                  <span className='text-7xl font-black text-white'>69</span>
                   <span className='text-xl text-gray-500'>/mes</span>
                 </div>
-                <p className='text-sm text-gray-500 mt-2'>Sin contrato · Cancela cuando quieras</p>
+                <p className='text-sm line-through mt-1' style={{ color: '#555' }}>S/. 120 / mes</p>
+                <p className='text-sm text-gray-500 mt-1'>Sin contrato · Cancela cuando quieras</p>
               </div>
 
               {/* Features */}
@@ -643,7 +649,7 @@ export default function LandingPage() {
                   style={{ backgroundColor: '#C0392B' }}
                   onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#A93226' }}
                   onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#C0392B' }}>
-                  Probar gratis 14 días →
+                  Empezar gratis ahora →
                 </Link>
                 <p className='text-center text-xs text-gray-400 mt-3'>
                   Sin tarjeta de crédito requerida
@@ -668,8 +674,7 @@ export default function LandingPage() {
               <span style={{ color: '#C0392B' }}>crecer sin límites.</span>
             </h2>
             <p className='text-gray-400 mb-8'>
-              Más de 500 negocios ya automatizaron sus reservas con AgendaYa.
-              Empieza hoy, gratis.
+              Automatiza tus reservas hoy y recibe más citas sin llamadas ni coordinación manual.
             </p>
             <Link to='/register'
               className='shimmer-btn inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-black text-white transition-all'

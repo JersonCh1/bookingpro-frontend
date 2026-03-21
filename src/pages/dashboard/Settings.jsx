@@ -18,6 +18,7 @@ const schema = z.object({
   address:       z.string().optional(),
   city:          z.string().optional(),
   description:   z.string().optional(),
+  logo:          z.string().url('Ingresa una URL válida').optional().or(z.literal('')),
 })
 
 const TYPES = [
@@ -48,7 +49,7 @@ export default function Settings() {
   const [copied, setCopied] = useState(false)
   const [toast, setToast] = useState(null)
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       name:          tenant?.name          || '',
@@ -58,8 +59,11 @@ export default function Settings() {
       address:       tenant?.address       || '',
       city:          tenant?.city          || '',
       description:   tenant?.description   || '',
+      logo:          tenant?.logo          || '',
     },
   })
+
+  const logoValue = watch('logo')
 
   const { mutate, isPending } = useMutation({
     mutationFn: (data) => authApi.updateTenant(data).then(r => r.data.data),
@@ -148,6 +152,29 @@ export default function Settings() {
               className='w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-400 resize-none'
               {...register('description')}
             />
+            <p className='text-xs text-gray-400'>Se mostrará en tu página pública de reservas</p>
+          </div>
+          <div className='flex flex-col gap-1.5'>
+            <label className='text-sm font-medium text-gray-700'>Logo del negocio (URL)</label>
+            <div className='flex gap-3 items-start'>
+              <div className='flex-1'>
+                <input
+                  type='url'
+                  placeholder='https://ejemplo.com/mi-logo.png'
+                  className='w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-400'
+                  {...register('logo')}
+                />
+                {errors.logo && <p className='mt-1 text-xs text-red-500'>{errors.logo.message}</p>}
+              </div>
+              {logoValue && (
+                <img
+                  src={logoValue}
+                  alt='Preview logo'
+                  className='w-12 h-12 rounded-xl object-cover border border-gray-200 flex-shrink-0'
+                  onError={e => { e.target.style.display = 'none' }}
+                />
+              )}
+            </div>
             <p className='text-xs text-gray-400'>Se mostrará en tu página pública de reservas</p>
           </div>
           <Button type='submit' loading={isPending}>

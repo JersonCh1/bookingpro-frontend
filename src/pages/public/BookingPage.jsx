@@ -722,10 +722,12 @@ export default function BookingPage() {
           {/* Negocio info */}
           <div className='flex items-center gap-4 mb-6'>
             <div
-              className='w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 text-xl font-black text-white'
+              className='w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 text-xl font-black text-white overflow-hidden'
               style={{ backgroundColor: '#C0392B', boxShadow: '0 4px 16px rgba(192,57,43,0.4)' }}
             >
-              {tenant.name[0]?.toUpperCase()}
+              {tenant.logo
+                ? <img src={tenant.logo} alt={tenant.name} className='w-full h-full object-cover' onError={e => { e.target.style.display = 'none' }} />
+                : tenant.name[0]?.toUpperCase()}
             </div>
             <div>
               <div className='flex items-center gap-2 mb-0.5'>
