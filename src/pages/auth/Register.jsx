@@ -104,7 +104,7 @@ export default function Register() {
 
         {/* Logo */}
         <div className='relative z-10 mb-8'>
-          <LogoFull height={216} dark />
+          <LogoFull height={180} dark />
         </div>
 
         {/* Copy — fluye naturalmente */}
@@ -188,7 +188,7 @@ export default function Register() {
         <div className='flex-shrink-0 flex items-center justify-between px-8 py-3'
           style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
           <div className='lg:hidden'>
-            <LogoFull height={96} />
+            <LogoFull height={80} />
           </div>
           <div className='hidden lg:block' />
           <div className='flex items-center gap-3'>
