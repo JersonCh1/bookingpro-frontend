@@ -7,6 +7,7 @@ import { z } from 'zod'
 import { authApi } from '../../api/auth'
 import { schedulingApi, bookingsApi } from '../../api/bookings'
 import client from '../../api/client'
+import { LogoFull } from '../../components/ui/Logo'
 import { formatCurrency, formatTime, getErrorMessage } from '../../utils/helpers'
 import {
   Calendar, Clock, MapPin, Phone, CheckCircle,
@@ -46,10 +47,7 @@ function StepService({ slug, onSelect }) {
           <button
             key={s.id}
             onClick={() => onSelect(s)}
-            className='w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-l-4 text-left group transition-all bg-white'
-            style={{ borderLeftColor: 'transparent' }}
-            onMouseEnter={e => { e.currentTarget.style.borderLeft = '4px solid #C0392B'; e.currentTarget.style.backgroundColor = '#fef9f9' }}
-            onMouseLeave={e => { e.currentTarget.style.borderLeft = '1px solid #f3f4f6'; e.currentTarget.style.backgroundColor = 'white' }}
+            className='service-card w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 text-left bg-white'
           >
             <div className='flex items-center gap-4 min-w-0'>
               <div className='w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0'
@@ -195,7 +193,7 @@ function StepTime({ slug, service, date, onSelect }) {
               <button
                 key={slot.time}
                 onClick={() => onSelect(slot.time)}
-                className='py-3 rounded-xl text-sm font-bold border-2 transition-all'
+                className='ripple-container py-3 rounded-xl text-sm font-bold border-2 transition-all'
                 style={{ borderColor: '#C0392B', color: '#C0392B', backgroundColor: 'white' }}
                 onMouseEnter={e => {
                   e.currentTarget.style.backgroundColor = '#C0392B'
@@ -381,11 +379,16 @@ export default function BookingPage() {
     <div className='min-h-screen flex flex-col bg-gray-50'>
 
       {/* Hero negro */}
-      <div style={{ backgroundColor: '#0D0D0D' }}>
-        <div className='max-w-lg mx-auto px-5 py-10'>
+      <div style={{ backgroundColor: '#0D0D0D' }} className='relative overflow-hidden'>
+        {/* Dot pattern overlay */}
+        <div className='absolute inset-0 pointer-events-none' style={{
+          backgroundImage: 'radial-gradient(rgba(192,57,43,0.15) 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+        }} />
+        <div className='max-w-lg mx-auto px-5 py-10 relative z-10'>
 
           {/* Negocio info */}
-          <div className='flex items-center gap-4 mb-7'>
+          <div className='flex items-center gap-4 mb-7 fade-slide-up'>
             <div
               className='w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 text-2xl font-black text-white'
               style={{ backgroundColor: '#1A1A1A', border: '1px solid #2C2C2C' }}
@@ -478,11 +481,11 @@ export default function BookingPage() {
       </div>
 
       {/* Footer */}
-      <footer className='py-5 text-center border-t border-gray-100 bg-white'>
-        <p className='text-xs text-gray-400'>
-          Powered by <span className='font-black text-gray-600'>AgendaYa</span>
-          <span className='pulse-dot ml-1' style={{ color: '#C0392B' }}>●</span>
-        </p>
+      <footer className='py-4 text-center border-t border-gray-100 bg-white'>
+        <div className='inline-flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity'>
+          <span className='text-xs text-gray-400'>Powered by</span>
+          <LogoFull height={20} />
+        </div>
       </footer>
     </div>
   )

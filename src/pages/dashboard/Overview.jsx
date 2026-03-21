@@ -7,7 +7,7 @@ import { formatDate, formatTime, formatCurrency } from '../../utils/helpers'
 
 function StatCard({ title, value, subtitle, icon: Icon, colorClass }) {
   return (
-    <div className='card p-5'>
+    <div className='card stat-card p-5'>
       <div className={`inline-flex p-2.5 rounded-xl mb-3 ${colorClass}`}>
         <Icon className='w-5 h-5' />
       </div>
@@ -19,7 +19,7 @@ function StatCard({ title, value, subtitle, icon: Icon, colorClass }) {
 }
 
 function SkeletonCard() {
-  return <div className='card p-5 h-28 animate-pulse bg-gray-50' />
+  return <div className='card p-5 h-28 skeleton-shimmer' />
 }
 
 export default function Overview() {
@@ -53,7 +53,7 @@ export default function Overview() {
         </div>
         {tenant?.slug && (
           <a
-            href={`/b/${tenant.slug}`}
+            href={`/book/${tenant.slug}`}
             target='_blank'
             rel='noopener noreferrer'
             className='hidden sm:inline-flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-700 font-medium whitespace-nowrap'
@@ -116,11 +116,11 @@ export default function Overview() {
         {isLoading ? (
           <div className='divide-y divide-gray-50'>
             {[...Array(3)].map((_, i) => (
-              <div key={i} className='px-6 py-4 flex gap-4 animate-pulse'>
-                <div className='w-10 h-10 rounded-full bg-gray-100 flex-shrink-0' />
-                <div className='flex-1 space-y-2'>
-                  <div className='h-3.5 bg-gray-100 rounded w-1/3' />
-                  <div className='h-3 bg-gray-100 rounded w-1/4' />
+              <div key={i} className='px-6 py-4 flex gap-4'>
+                <div className='w-10 h-10 rounded-full skeleton-shimmer flex-shrink-0' />
+                <div className='flex-1 space-y-2 pt-1'>
+                  <div className='h-3.5 skeleton-shimmer rounded w-1/3' />
+                  <div className='h-3 skeleton-shimmer rounded w-1/4' />
                 </div>
               </div>
             ))}
