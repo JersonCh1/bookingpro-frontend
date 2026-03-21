@@ -22,7 +22,7 @@ const PARTICLES = Array.from({ length: 22 }, (_, i) => ({
 }))
 
 const STATS = [
-  { fixed: 'Nuevo', label: 'en Arequipa' },
+  { fixed: 'Nuevo', label: 'en Perú' },
   { fixed: '24/7', label: 'disponibilidad' },
   { fixed: '0',   label: 'llamadas perdidas' },
 ]
@@ -149,7 +149,7 @@ export default function Login() {
           </div>
           <blockquote className='pl-4 text-xs italic leading-relaxed' style={{ color: '#777', borderLeft: '2px solid #3A3A3A' }}>
             "Antes perdíamos citas por no contestar. Ahora todo es automático."
-            <span className='block mt-1 not-italic' style={{ color: '#555' }}>— Sé el primero en probarlo · Arequipa, Perú</span>
+            <span className='block mt-1 not-italic' style={{ color: '#555' }}>— Sé el primero en probarlo · Perú 🇵🇪</span>
           </blockquote>
         </div>
 

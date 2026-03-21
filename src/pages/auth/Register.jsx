@@ -202,7 +202,7 @@ export default function Register() {
             {[
               { el: <CountUp target={2} suffix=' min' />, label: 'para configurar' },
               { el: <span>24/7</span>, label: 'online' },
-              { el: <span>Nuevo</span>, label: 'en Arequipa' },
+              { el: <span>Nuevo</span>, label: 'en Perú' },
             ].map(({ el, label }) => (
               <div key={label}>
                 <p className='text-2xl font-black' style={{ color: '#C0392B' }}>{el}</p>

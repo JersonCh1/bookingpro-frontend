@@ -132,7 +132,7 @@ function StatsBar() {
           <span className='inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full'
             style={{ backgroundColor: 'rgba(34,197,94,0.1)', color: '#4ade80' }}>
             <span className='w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse' />
-            Arequipa, Perú
+            Todo Perú 🇵🇪
           </span>
         </div>
         <div>
