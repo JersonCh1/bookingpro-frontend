@@ -92,9 +92,13 @@ export default function Register() {
           backgroundSize: '44px 44px',
         }} />
 
-        {/* Glow central */}
-        <div className='absolute inset-0 pointer-events-none' style={{
-          background: 'radial-gradient(ellipse at 25% 50%, rgba(192,57,43,0.13) 0%, transparent 58%)',
+        {/* Glow central animado */}
+        <div className='glow-breathe absolute inset-0 pointer-events-none' style={{
+          background: 'radial-gradient(ellipse at 25% 50%, rgba(192,57,43,0.15) 0%, transparent 58%)',
+        }} />
+        <div className='glow-breathe-slow absolute pointer-events-none' style={{
+          top: '60%', right: '-10%', width: '50%', height: '50%',
+          background: 'radial-gradient(circle, rgba(192,57,43,0.07) 0%, transparent 65%)',
         }} />
 
         {/* Vignette */}
@@ -200,7 +204,7 @@ export default function Register() {
         }} />
 
         {/* ── Header: logo izquierda + botón derecha ── */}
-        <header className='relative z-10 flex-shrink-0 flex items-center justify-between px-8 py-4'
+        <header className='header-enter relative z-10 flex-shrink-0 flex items-center justify-between px-8 py-4'
           style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
           <LogoFull height={36} />
           <Link
@@ -215,7 +219,7 @@ export default function Register() {
         </header>
 
         {/* ── Formulario ── */}
-        <div className='relative z-10 flex-1 overflow-y-auto flex items-start lg:items-center justify-center px-8 py-6'>
+        <div className='panel-enter relative z-10 flex-1 overflow-y-auto flex items-start lg:items-center justify-center px-8 py-6'>
           <div className='w-full max-w-md'>
 
             <div className='mb-5'>
@@ -287,10 +291,8 @@ export default function Register() {
               </div>
 
               <button type='submit' disabled={isPending}
-                className='shimmer-btn w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60 flex items-center justify-center gap-2'
-                style={{ backgroundColor: '#C0392B' }}
-                onMouseEnter={e => !isPending && (e.currentTarget.style.backgroundColor = '#A93226')}
-                onMouseLeave={e => !isPending && (e.currentTarget.style.backgroundColor = '#C0392B')}>
+                className='auth-btn shimmer-btn w-full py-3.5 rounded-xl text-sm font-bold text-white disabled:opacity-60 flex items-center justify-center gap-2'
+                style={{ backgroundColor: '#C0392B' }}>
                 {isPending
                   ? <><Loader2 className='w-4 h-4 animate-spin' />Creando cuenta...</>
                   : <>Crear cuenta gratis <ArrowRight className='w-4 h-4' /></>}

@@ -10,10 +10,12 @@ import logoSrc from '../../assets/logoagendaya.png'
   dark=false → logo directo, sin filtros.
 */
 function LogoCrop({ height }) {
-  const full = height / 0.29
-  const cTop = full * 0.39
-  const cLft = full * 0.11
-  const cWid = full * 0.78
+  // Recorta el espacio blanco del PNG 500×500 sin cortar el logo
+  // Left muy conservador (0%) para nunca cortar el borde izquierdo del ícono
+  const full = height / 0.30   // contenido ocupa ~30% del alto del canvas
+  const cTop = full * 0.37     // espacio transparente arriba
+  const cLft = 0               // sin recorte izquierdo — evita cortar el ícono
+  const cWid = full * 0.82     // ancho visible: contenido + margen derecho recortado
 
   return (
     <div style={{ width: cWid, height, overflow: 'hidden', position: 'relative', flexShrink: 0 }}>

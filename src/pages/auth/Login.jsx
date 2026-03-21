@@ -56,12 +56,8 @@ function Field({ label, error, ...props }) {
     <div>
       <label className='block text-xs font-semibold text-gray-500 mb-2 tracking-wide'>{label}</label>
       <input
-        className={`w-full px-4 py-3 rounded-xl text-sm text-gray-900 font-medium outline-none transition-all
-          bg-white border placeholder:text-gray-300
-          ${error
-            ? 'border-red-300 focus:border-red-400 focus:ring-2 focus:ring-red-100'
-            : 'border-gray-200 focus:border-red-400 focus:ring-2 focus:ring-red-50'
-          }`}
+        className={`auth-input w-full px-4 py-3 rounded-xl text-sm text-gray-900 font-medium bg-gray-50 border placeholder:text-gray-300
+          ${error ? 'border-red-300' : 'border-gray-200'}`}
         {...props}
       />
       {error && <p className='mt-1.5 text-xs text-red-500 font-medium'>{error}</p>}
@@ -89,9 +85,15 @@ export default function Login() {
           backgroundSize: '44px 44px',
         }} />
 
-        {/* Glow central */}
-        <div className='absolute inset-0 pointer-events-none' style={{
-          background: 'radial-gradient(ellipse at 30% 50%, rgba(192,57,43,0.13) 0%, transparent 58%)',
+        {/* Glow central animado */}
+        <div className='glow-breathe absolute inset-0 pointer-events-none' style={{
+          background: 'radial-gradient(ellipse at 30% 50%, rgba(192,57,43,0.15) 0%, transparent 58%)',
+        }} />
+
+        {/* Segundo glow esquina */}
+        <div className='glow-breathe-slow absolute pointer-events-none' style={{
+          top: '60%', right: '-10%', width: '50%', height: '50%',
+          background: 'radial-gradient(circle, rgba(192,57,43,0.07) 0%, transparent 65%)',
         }} />
 
         {/* Vignette edges */}
@@ -191,7 +193,7 @@ export default function Login() {
         }} />
 
         {/* ── Header: logo izquierda + botón derecha ── */}
-        <header className='relative z-10 flex-shrink-0 flex items-center justify-between px-8 py-4'
+        <header className='header-enter relative z-10 flex-shrink-0 flex items-center justify-between px-8 py-4'
           style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
           <LogoFull height={36} />
           <Link
@@ -206,11 +208,11 @@ export default function Login() {
         </header>
 
         {/* ── Contenido del formulario ── */}
-        <div className='relative z-10 flex-1 flex items-center justify-center px-8 py-10'>
+        <div className='panel-enter relative z-10 flex-1 flex items-center justify-center px-8 py-10'>
           <div className='w-full max-w-sm'>
 
             {/* Encabezado */}
-            <div className='mb-8'>
+            <div className='form-item-1 mb-8'>
               <span className='inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-3'
                 style={{ backgroundColor: 'rgba(192,57,43,0.08)', color: '#C0392B' }}>
                 <span className='w-1.5 h-1.5 rounded-full bg-current animate-pulse' />
@@ -230,23 +232,27 @@ export default function Login() {
             )}
 
             <form onSubmit={handleSubmit(d => mutate(d))} className='space-y-5'>
-              <Field label='Correo electrónico' type='email' placeholder='tu@negocio.com'
-                autoComplete='email' error={errors.email?.message} {...register('email')} />
-              <Field label='Contraseña' type='password' placeholder='••••••••'
-                autoComplete='current-password' error={errors.password?.message} {...register('password')} />
+              <div className='form-item-2'>
+                <Field label='Correo electrónico' type='email' placeholder='tu@negocio.com'
+                  autoComplete='email' error={errors.email?.message} {...register('email')} />
+              </div>
+              <div className='form-item-3'>
+                <Field label='Contraseña' type='password' placeholder='••••••••'
+                  autoComplete='current-password' error={errors.password?.message} {...register('password')} />
+              </div>
 
-              <button type='submit' disabled={isPending}
-                className='shimmer-btn w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-60 flex items-center justify-center gap-2 mt-2'
-                style={{ backgroundColor: '#C0392B' }}
-                onMouseEnter={e => !isPending && (e.currentTarget.style.backgroundColor = '#A93226')}
-                onMouseLeave={e => !isPending && (e.currentTarget.style.backgroundColor = '#C0392B')}>
-                {isPending
-                  ? <><Loader2 className='w-4 h-4 animate-spin' />Ingresando...</>
-                  : <>Iniciar sesión <ArrowRight className='w-4 h-4' /></>}
-              </button>
+              <div className='form-item-4'>
+                <button type='submit' disabled={isPending}
+                  className='auth-btn shimmer-btn w-full py-3.5 rounded-xl text-sm font-bold text-white disabled:opacity-60 flex items-center justify-center gap-2'
+                  style={{ backgroundColor: '#C0392B' }}>
+                  {isPending
+                    ? <><Loader2 className='w-4 h-4 animate-spin' />Ingresando...</>
+                    : <>Iniciar sesión <ArrowRight className='w-4 h-4' /></>}
+                </button>
+              </div>
             </form>
 
-            <p className='text-center text-sm text-gray-400 mt-8'>
+            <p className='form-item-5 text-center text-sm text-gray-400 mt-8'>
               ¿No tienes cuenta?{' '}
               <Link to='/register' className='font-bold transition-colors' style={{ color: '#C0392B' }}
                 onMouseEnter={e => { e.currentTarget.style.color = '#922B21' }}
