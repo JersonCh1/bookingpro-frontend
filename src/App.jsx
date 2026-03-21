@@ -16,6 +16,11 @@ import BookingPage from './pages/public/BookingPage'
 import Landing     from './pages/Landing'
 import NotFound    from './pages/NotFound'
 
+import SuperAdminLayout    from './pages/superadmin/SuperAdminLayout'
+import SuperAdminOverview  from './pages/superadmin/SuperAdminOverview'
+import SuperAdminBusinesses from './pages/superadmin/SuperAdminBusinesses'
+import SuperAdminBookings  from './pages/superadmin/SuperAdminBookings'
+
 function RedirectToBook() {
   const { slug } = useParams()
   return <Navigate to={`/book/${slug}`} replace />
@@ -29,6 +34,13 @@ function PrivateRoute({ children }) {
 function PublicRoute({ children }) {
   const { token } = useAuthStore()
   return !token ? children : <Navigate to='/dashboard' replace />
+}
+
+function SuperAdminRoute({ children }) {
+  const { token, user } = useAuthStore()
+  if (!token) return <Navigate to='/login' replace />
+  if (!user?.is_staff) return <Navigate to='/dashboard' replace />
+  return children
 }
 
 function AppInner() {
@@ -56,6 +68,13 @@ function AppInner() {
           <Route path='staff'        element={<Staff />} />
           <Route path='scheduling'   element={<Scheduling />} />
           <Route path='settings'     element={<Settings />} />
+        </Route>
+
+        {/* Super Admin (requiere is_staff=true) */}
+        <Route path='/superadmin' element={<SuperAdminRoute><SuperAdminLayout /></SuperAdminRoute>}>
+          <Route index                  element={<SuperAdminOverview />} />
+          <Route path='businesses'      element={<SuperAdminBusinesses />} />
+          <Route path='bookings'        element={<SuperAdminBookings />} />
         </Route>
 
         {/* 404 — catch-all */}

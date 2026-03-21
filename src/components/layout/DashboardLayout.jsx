@@ -1,7 +1,7 @@
-import { Outlet, NavLink } from 'react-router-dom'
+import { Outlet, NavLink, Link } from 'react-router-dom'
 import {
   LayoutDashboard, Calendar, Scissors, Users, Settings,
-  LogOut, Menu, X, ExternalLink, Clock,
+  LogOut, Menu, X, ExternalLink, Clock, ShieldCheck,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useAuthStore } from '../../store/authStore'
@@ -126,6 +126,18 @@ export default function DashboardLayout() {
               </p>
             </div>
           </div>
+
+          {user?.is_staff && (
+            <Link to='/superadmin'
+              className='flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium transition-all mb-1'
+              style={{ color: '#D4AF37' }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(212,175,55,0.1)' }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent' }}
+            >
+              <ShieldCheck className='w-4 h-4' />
+              Super Admin
+            </Link>
+          )}
 
           <button
             onClick={logout}
