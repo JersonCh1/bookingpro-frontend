@@ -1,97 +1,60 @@
-import logoSrc from '../../assets/logoagendaya.jpg'
+import logoSrc from '../../assets/logoagendaya.png'
 
-/* ── Logo icon only (square crop — just the calendar symbol) ── */
-export function LogoIcon({ size = 36, className = '' }) {
-  return (
-    <div
-      className={`relative flex-shrink-0 rounded-xl overflow-hidden ${className}`}
-      style={{ width: size, height: size }}
-    >
-      {/* Idle red glow ring */}
-      <div
-        className='absolute inset-0 rounded-xl pointer-events-none z-10'
-        style={{
-          boxShadow: 'inset 0 0 0 1px rgba(192,57,43,0.35)',
-          animation: 'logo-pulse 3s ease-in-out infinite',
-        }}
-      />
-      <img
-        src={logoSrc}
-        alt='AgendaYa logo'
-        draggable={false}
-        style={{
-          height: '100%',
-          width: 'auto',
-          objectFit: 'cover',
-          objectPosition: 'left center',
-          transform: 'scale(1)',
-          transition: 'transform 0.3s ease',
-          display: 'block',
-        }}
-      />
-    </div>
-  )
-}
-
-/* ── Full horizontal logo (image + wordmark) ── */
+/* ─────────────────────────────────────────────────────────
+   LogoFull
+   variant='light'  → logo original (sobre fondos claros)
+   variant='dark'   → todo blanco + glow rojo (sobre fondos negros)
+───────────────────────────────────────────────────────── */
 export function LogoFull({ height = 38, className = '', variant = 'light' }) {
   return (
-    <div
-      className={`relative inline-flex items-center group ${className}`}
-      style={{ height }}
-    >
-      {/* Glow on hover */}
-      <div
-        className='absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-400'
-        style={{ boxShadow: '0 0 24px rgba(192,57,43,0.35)' }}
-      />
-      <img
-        src={logoSrc}
-        alt='AgendaYa'
-        draggable={false}
-        className='relative z-10'
-        style={{
-          height: '100%',
-          width: 'auto',
-          objectFit: 'contain',
-          filter: variant === 'dark'
-            ? 'brightness(0) invert(1) drop-shadow(0 0 6px rgba(192,57,43,0.6))'
-            : 'none',
-          transition: 'filter 0.3s ease, transform 0.3s ease',
-          transform: 'scale(1)',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)' }}
-        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)' }}
-      />
-    </div>
+    <img
+      src={logoSrc}
+      alt='AgendaYa'
+      draggable={false}
+      className={className}
+      style={{
+        height,
+        width: 'auto',
+        objectFit: 'contain',
+        display: 'block',
+        filter: variant === 'dark'
+          ? 'brightness(0) invert(1) drop-shadow(0 0 8px rgba(192,57,43,0.5))'
+          : 'none',
+        transition: 'transform 0.25s ease',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.04)' }}
+      onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)' }}
+    />
   )
 }
 
-/* ── Sidebar logo: icon + wordmark on dark background ── */
+/* ─────────────────────────────────────────────────────────
+   SidebarLogo — icono blanco + wordmark para sidebar oscuro
+───────────────────────────────────────────────────────── */
 export function SidebarLogo() {
   return (
-    <div className='flex items-center gap-2.5 group cursor-default'>
-      {/* Icon badge */}
+    <div className='flex items-center gap-2.5'>
+      {/* Icono: logo todo-blanco en contenedor oscuro con ring rojo */}
       <div
-        className='relative flex-shrink-0 rounded-xl overflow-hidden'
-        style={{ width: 34, height: 34 }}
+        className='flex-shrink-0 rounded-xl flex items-center justify-center'
+        style={{
+          width: 34,
+          height: 34,
+          backgroundColor: '#1A1A1A',
+          boxShadow: '0 0 0 1.5px rgba(192,57,43,0.6)',
+          animation: 'logo-pulse 3s ease-in-out infinite',
+        }}
       >
         <img
           src={logoSrc}
           alt=''
           draggable={false}
           style={{
-            height: '100%',
-            width: 'auto',
-            objectFit: 'cover',
-            objectPosition: 'left center',
-            display: 'block',
+            width: 22,
+            height: 22,
+            objectFit: 'contain',
+            filter: 'brightness(0) invert(1)',
           }}
-        />
-        {/* Red border ring */}
-        <div
-          className='absolute inset-0 rounded-xl pointer-events-none'
-          style={{ boxShadow: 'inset 0 0 0 1.5px rgba(192,57,43,0.5)' }}
         />
       </div>
 
@@ -107,6 +70,35 @@ export function SidebarLogo() {
           </span>
         </div>
       </div>
+    </div>
+  )
+}
+
+/* ─────────────────────────────────────────────────────────
+   LogoIcon — solo el icono cuadrado (para favicon, etc.)
+───────────────────────────────────────────────────────── */
+export function LogoIcon({ size = 36, variant = 'light', className = '' }) {
+  return (
+    <div
+      className={`flex-shrink-0 rounded-xl flex items-center justify-center ${className}`}
+      style={{
+        width: size,
+        height: size,
+        backgroundColor: variant === 'dark' ? '#1A1A1A' : 'transparent',
+        boxShadow: variant === 'dark' ? '0 0 0 1.5px rgba(192,57,43,0.5)' : 'none',
+      }}
+    >
+      <img
+        src={logoSrc}
+        alt='AgendaYa'
+        draggable={false}
+        style={{
+          width: size * 0.7,
+          height: size * 0.7,
+          objectFit: 'contain',
+          filter: variant === 'dark' ? 'brightness(0) invert(1)' : 'none',
+        }}
+      />
     </div>
   )
 }
