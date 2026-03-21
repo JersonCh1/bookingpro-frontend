@@ -422,6 +422,7 @@ function StepTime({ slug, service, date, onSelect }) {
 const clientSchema = z.object({
   customer_name:  z.string().min(2, 'Nombre requerido'),
   customer_phone: z.string().min(7, 'Teléfono / WhatsApp requerido'),
+  notes:          z.string().optional(),
 })
 
 function StepClientForm({ service, date, time, onSubmit, loading, error }) {
@@ -502,6 +503,17 @@ function StepClientForm({ service, date, time, onSubmit, loading, error }) {
           error={errors.customer_phone?.message}
           {...register('customer_phone')}
         />
+        <div>
+          <label className='block text-xs font-semibold text-gray-500 mb-1.5 tracking-wide'>
+            Notas adicionales <span className='font-normal text-gray-400'>(opcional)</span>
+          </label>
+          <textarea
+            rows={3}
+            placeholder='Ej: alergia a ciertos productos, preferencia de estilo, etc.'
+            className='w-full px-4 py-3 rounded-xl text-sm text-gray-900 bg-gray-50 border border-gray-200 placeholder:text-gray-300 resize-none focus:outline-none focus:border-red-300 focus:bg-white transition-all'
+            {...register('notes')}
+          />
+        </div>
         <button
           type='submit'
           disabled={loading}

@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { useBookings, useUpdateBookingStatus } from '../../hooks/useBookings'
+import { useBookings, useUpdateBookingStatus, useStaff } from '../../hooks/useBookings'
 import { StatusBadge } from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
 import Modal from '../../components/ui/Modal'
 import { formatDate, formatTime, formatCurrency } from '../../utils/helpers'
-import { Search, Calendar, Phone, CheckCircle, XCircle, Clock, UserX } from 'lucide-react'
+import { Search, Calendar, Phone, CheckCircle, XCircle, Clock, UserX, User } from 'lucide-react'
 
 const STATUS_OPTIONS = [
   { value: '',          label: 'Todos los estados' },
@@ -28,6 +28,8 @@ export default function Bookings() {
 
   const { data, isLoading }                        = useBookings(filters)
   const { mutate: updateStatus, isPending: saving } = useUpdateBookingStatus()
+  const { data: staffData }                         = useStaff()
+  const staffList = Array.isArray(staffData) ? staffData : (staffData?.results ?? [])
 
   const bookings = data?.results ?? []
 
@@ -123,6 +125,7 @@ export default function Bookings() {
                     <th className='text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide'>Cliente</th>
                     <th className='text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide'>Servicio</th>
                     <th className='text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide'>Fecha & Hora</th>
+                    <th className='text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide'>Personal</th>
                     <th className='text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide'>Precio</th>
                     <th className='text-left px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide'>Estado</th>
                     <th className='px-5 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-right'>Acciones</th>
@@ -141,6 +144,11 @@ export default function Bookings() {
                       <td className='px-5 py-3.5'>
                         <p className='text-gray-900'>{formatDate(b.date)}</p>
                         <p className='text-gray-400 text-xs'>{formatTime(b.start_time)}</p>
+                      </td>
+                      <td className='px-5 py-3.5'>
+                        {b.staff_name
+                          ? <span className='text-gray-700 text-sm'>{b.staff_name}</span>
+                          : <span className='text-gray-300 text-xs italic'>Sin asignar</span>}
                       </td>
                       <td className='px-5 py-3.5 text-gray-700'>{formatCurrency(b.service_price)}</td>
                       <td className='px-5 py-3.5'><StatusBadge status={b.status} /></td>
@@ -255,6 +263,31 @@ export default function Bookings() {
                 </div>
               )}
             </div>
+
+            {/* Asignar personal */}
+            {staffList.length > 0 && (
+              <div className='border-t border-gray-100 pt-4'>
+                <p className='text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3 flex items-center gap-1.5'>
+                  <User className='w-3.5 h-3.5' /> Asignar personal
+                </p>
+                <select
+                  className='input w-full'
+                  defaultValue={selected.staff ?? ''}
+                  onChange={e => {
+                    const val = e.target.value
+                    updateStatus(
+                      { id: selected.id, staff: val === '' ? null : Number(val) },
+                      { onSuccess: (updated) => setSelected(prev => ({ ...prev, staff: updated.staff, staff_name: updated.staff_name })) }
+                    )
+                  }}
+                >
+                  <option value=''>— Sin asignar —</option>
+                  {staffList.map(s => (
+                    <option key={s.id} value={s.id}>{s.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Acciones */}
             <div className='border-t border-gray-100 pt-4'>
