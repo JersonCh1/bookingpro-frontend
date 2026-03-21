@@ -12,7 +12,7 @@ import { formatCurrency, formatTime, getErrorMessage } from '../../utils/helpers
 import {
   Calendar, Clock, MapPin, Phone, CheckCircle,
   ChevronLeft, ChevronRight, Loader2, Scissors,
-  Search, X, Star, ArrowRight, Sparkles,
+  Search, X, Star, ArrowRight, Zap,
 } from 'lucide-react'
 import {
   format, addMonths, subMonths, startOfMonth, endOfMonth,
@@ -73,7 +73,7 @@ function StepService({ slug, onSelect }) {
       <div className='mb-5'>
         <span className='inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full mb-2'
           style={{ backgroundColor: 'rgba(192,57,43,0.08)', color: '#C0392B' }}>
-          <Sparkles className='w-3 h-3' />
+          <Zap className='w-3 h-3' />
           Paso 1 de 4
         </span>
         <h2 className='text-xl font-black text-gray-900 leading-tight'>¿Qué servicio necesitas?</h2>

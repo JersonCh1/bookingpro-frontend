@@ -30,6 +30,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Página pública de reservas (sin auth) — primero para evitar conflictos */}
+        <Route path='/book/:slug' element={<BookingPage />} />
+
         {/* Públicas (redirigen a dashboard si ya está logueado) */}
         <Route path='/'         element={<PublicRoute><Landing /></PublicRoute>} />
         <Route path='/login'    element={<PublicRoute><Login /></PublicRoute>} />
@@ -44,9 +47,6 @@ export default function App() {
           <Route path='scheduling'   element={<Scheduling />} />
           <Route path='settings'     element={<Settings />} />
         </Route>
-
-        {/* Página pública de reservas (sin auth) */}
-        <Route path='/book/:slug' element={<BookingPage />} />
 
         {/* 404 — catch-all */}
         <Route path='*' element={<NotFound />} />
