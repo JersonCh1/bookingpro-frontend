@@ -12,18 +12,14 @@ import {
   Calendar, Clock, MapPin, Phone, CheckCircle,
   ChevronLeft, ChevronRight, Loader2, Scissors,
 } from 'lucide-react'
-import { format, addMonths, subMonths, startOfMonth, endOfMonth,
-         eachDayOfInterval, getDay, startOfToday, isBefore, isSameDay } from 'date-fns'
+import {
+  format, addMonths, subMonths, startOfMonth, endOfMonth,
+  eachDayOfInterval, getDay, startOfToday, isBefore, isSameDay,
+} from 'date-fns'
 import { es } from 'date-fns/locale'
-import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 
-const STEP_LABELS = [
-  { n: 1, label: 'Servicio', icon: Scissors },
-  { n: 2, label: 'Fecha',    icon: Calendar },
-  { n: 3, label: 'Hora',     icon: Clock },
-  { n: 4, label: 'Datos',    icon: Phone },
-]
+const STEP_LABELS = ['Servicio', 'Fecha', 'Hora', 'Datos']
 
 // ── Paso 1: Elegir servicio ───────────────────────────────
 function StepService({ slug, onSelect }) {
@@ -36,28 +32,32 @@ function StepService({ slug, onSelect }) {
   if (isLoading) {
     return (
       <div className='flex justify-center py-12'>
-        <Loader2 className='w-6 h-6 animate-spin text-primary-600' />
+        <Loader2 className='w-6 h-6 animate-spin' style={{ color: '#C0392B' }} />
       </div>
     )
   }
 
   return (
     <div>
-      <h2 className='text-lg font-bold text-gray-900 mb-1'>¿Qué servicio necesitas?</h2>
-      <p className='text-sm text-gray-500 mb-5'>Elige el servicio para tu cita</p>
-      <div className='space-y-3'>
+      <h2 className='text-lg font-black text-gray-900 mb-1'>¿Qué servicio necesitas?</h2>
+      <p className='text-sm text-gray-400 mb-5'>Elige el servicio para tu cita</p>
+      <div className='space-y-2.5'>
         {services.map(s => (
           <button
             key={s.id}
             onClick={() => onSelect(s)}
-            className='w-full flex items-center justify-between p-4 border-2 border-gray-100 rounded-2xl hover:border-primary-400 hover:bg-primary-50/50 transition-all text-left group'
+            className='w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:border-l-4 text-left group transition-all bg-white'
+            style={{ borderLeftColor: 'transparent' }}
+            onMouseEnter={e => { e.currentTarget.style.borderLeft = '4px solid #C0392B'; e.currentTarget.style.backgroundColor = '#fef9f9' }}
+            onMouseLeave={e => { e.currentTarget.style.borderLeft = '1px solid #f3f4f6'; e.currentTarget.style.backgroundColor = 'white' }}
           >
             <div className='flex items-center gap-4 min-w-0'>
-              <div className='w-11 h-11 bg-primary-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-primary-200 transition-colors'>
-                <Scissors className='w-5 h-5 text-primary-600' />
+              <div className='w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0'
+                style={{ backgroundColor: '#fde8e8' }}>
+                <Scissors className='w-5 h-5' style={{ color: '#C0392B' }} />
               </div>
               <div className='min-w-0'>
-                <p className='font-semibold text-gray-900 group-hover:text-primary-700'>{s.name}</p>
+                <p className='font-bold text-gray-900 text-sm'>{s.name}</p>
                 {s.description && (
                   <p className='text-xs text-gray-400 mt-0.5 line-clamp-1'>{s.description}</p>
                 )}
@@ -66,7 +66,7 @@ function StepService({ slug, onSelect }) {
                 </p>
               </div>
             </div>
-            <span className='text-base font-bold text-primary-600 ml-3 flex-shrink-0'>
+            <span className='text-base font-black ml-3 flex-shrink-0' style={{ color: '#C0392B' }}>
               {formatCurrency(s.price)}
             </span>
           </button>
@@ -92,21 +92,21 @@ function StepDate({ slug, service, onSelect }) {
     }).then(r => r.data.data),
   })
 
-  const days     = eachDayOfInterval({ start: startOfMonth(month), end: endOfMonth(month) })
-  const blanks   = Array(getDay(days[0])).fill(null)
-  const isAvail  = (d) => availableDays.includes(format(d, 'yyyy-MM-dd'))
-  const isPast   = (d) => isBefore(d, today)
+  const days   = eachDayOfInterval({ start: startOfMonth(month), end: endOfMonth(month) })
+  const blanks = Array(getDay(days[0])).fill(null)
+  const isAvail = (d) => availableDays.includes(format(d, 'yyyy-MM-dd'))
+  const isPast  = (d) => isBefore(d, today)
 
   return (
     <div>
-      <h2 className='text-lg font-bold text-gray-900 mb-1'>¿Qué día prefieres?</h2>
-      <p className='text-sm text-gray-500 mb-5'>Los días en índigo tienen disponibilidad</p>
+      <h2 className='text-lg font-black text-gray-900 mb-1'>¿Qué día prefieres?</h2>
+      <p className='text-sm text-gray-400 mb-5'>Los días en rojo tienen disponibilidad</p>
 
       <div className='flex items-center justify-between mb-4'>
         <button
           onClick={() => setMonth(m => subMonths(m, 1))}
           disabled={isBefore(subMonths(month, 1), startOfMonth(today))}
-          className='p-2 rounded-xl hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors'
+          className='p-2 rounded-lg hover:bg-gray-100 disabled:opacity-30 transition-colors'
         >
           <ChevronLeft className='w-5 h-5' />
         </button>
@@ -115,7 +115,7 @@ function StepDate({ slug, service, onSelect }) {
         </p>
         <button
           onClick={() => setMonth(m => addMonths(m, 1))}
-          className='p-2 rounded-xl hover:bg-gray-100 transition-colors'
+          className='p-2 rounded-lg hover:bg-gray-100 transition-colors'
         >
           <ChevronRight className='w-5 h-5' />
         </button>
@@ -123,13 +123,13 @@ function StepDate({ slug, service, onSelect }) {
 
       <div className='grid grid-cols-7 mb-2'>
         {DAY_NAMES.map(d => (
-          <div key={d} className='text-center text-xs font-semibold text-gray-400 py-1'>{d}</div>
+          <div key={d} className='text-center text-xs font-bold text-gray-400 py-1'>{d}</div>
         ))}
       </div>
 
       {isLoading ? (
         <div className='flex justify-center py-8'>
-          <Loader2 className='w-5 h-5 animate-spin text-primary-600' />
+          <Loader2 className='w-5 h-5 animate-spin' style={{ color: '#C0392B' }} />
         </div>
       ) : (
         <div className='grid grid-cols-7 gap-1'>
@@ -142,15 +142,15 @@ function StepDate({ slug, service, onSelect }) {
                 key={day.toString()}
                 disabled={!avail}
                 onClick={() => avail && onSelect(format(day, 'yyyy-MM-dd'))}
-                className={`
-                  aspect-square rounded-xl text-sm font-semibold transition-all
-                  ${avail
-                    ? 'bg-primary-600 text-white hover:bg-primary-700 shadow-sm'
-                    : past
-                      ? 'text-gray-200 cursor-not-allowed'
-                      : 'text-gray-300 cursor-not-allowed'}
-                  ${isSameDay(day, today) && !avail ? 'ring-1 ring-gray-300' : ''}
-                `}
+                className='aspect-square rounded-xl text-sm font-bold transition-all'
+                style={{
+                  backgroundColor: avail ? '#C0392B' : 'transparent',
+                  color: avail ? 'white' : past ? '#d1d5db' : '#9ca3af',
+                  cursor: avail ? 'pointer' : 'not-allowed',
+                  outline: isSameDay(day, today) && !avail ? '1px solid #d1d5db' : 'none',
+                }}
+                onMouseEnter={e => avail && (e.currentTarget.style.backgroundColor = '#922B21')}
+                onMouseLeave={e => avail && (e.currentTarget.style.backgroundColor = '#C0392B')}
               >
                 {format(day, 'd')}
               </button>
@@ -174,19 +174,19 @@ function StepTime({ slug, service, date, onSelect }) {
 
   return (
     <div>
-      <h2 className='text-lg font-bold text-gray-900 mb-1'>¿A qué hora?</h2>
-      <p className='text-sm text-gray-500 mb-5 capitalize'>
+      <h2 className='text-lg font-black text-gray-900 mb-1'>¿A qué hora?</h2>
+      <p className='text-sm text-gray-400 mb-5 capitalize'>
         {format(new Date(date + 'T00:00'), "EEEE d 'de' MMMM", { locale: es })}
       </p>
 
       {isLoading ? (
         <div className='flex justify-center py-10'>
-          <Loader2 className='w-6 h-6 animate-spin text-primary-600' />
+          <Loader2 className='w-6 h-6 animate-spin' style={{ color: '#C0392B' }} />
         </div>
       ) : slots.filter(s => s.available).length === 0 ? (
         <div className='text-center py-10'>
           <Clock className='w-10 h-10 mx-auto mb-3 text-gray-200' />
-          <p className='text-gray-400'>Sin horarios disponibles este día</p>
+          <p className='text-gray-400 text-sm'>Sin horarios disponibles este día</p>
         </div>
       ) : (
         <div className='grid grid-cols-3 sm:grid-cols-4 gap-2'>
@@ -195,15 +195,21 @@ function StepTime({ slug, service, date, onSelect }) {
               <button
                 key={slot.time}
                 onClick={() => onSelect(slot.time)}
-                className='py-3 rounded-xl text-sm font-bold border-2 border-primary-200 text-primary-700 hover:bg-primary-600 hover:text-white hover:border-primary-600 transition-all'
+                className='py-3 rounded-xl text-sm font-bold border-2 transition-all'
+                style={{ borderColor: '#C0392B', color: '#C0392B', backgroundColor: 'white' }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.backgroundColor = '#C0392B'
+                  e.currentTarget.style.color = 'white'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.backgroundColor = 'white'
+                  e.currentTarget.style.color = '#C0392B'
+                }}
               >
                 {slot.time}
               </button>
             ) : (
-              <div
-                key={slot.time}
-                className='py-3 rounded-xl text-sm font-medium bg-gray-50 text-gray-300 text-center line-through cursor-not-allowed'
-              >
+              <div key={slot.time} className='py-3 rounded-xl text-sm font-medium bg-gray-50 text-gray-300 text-center line-through cursor-not-allowed'>
                 {slot.time}
               </div>
             )
@@ -227,23 +233,22 @@ function StepClientForm({ service, date, time, onSubmit, loading, error }) {
 
   return (
     <div>
-      <h2 className='text-lg font-bold text-gray-900 mb-4'>Confirma tu reserva</h2>
+      <h2 className='text-lg font-black text-gray-900 mb-4'>Confirma tu reserva</h2>
 
-      <div className='rounded-2xl p-4 mb-5 space-y-2.5'
-        style={{ background: 'linear-gradient(135deg, #eef2ff, #f5f3ff)' }}>
-        <p className='font-bold text-primary-800 text-base'>{service.name}</p>
-        <div className='flex items-center gap-2 text-sm text-primary-700'>
+      <div className='rounded-2xl p-4 mb-5 space-y-2.5' style={{ backgroundColor: '#fef2f2', border: '1px solid #fbd0d0' }}>
+        <p className='font-black text-base' style={{ color: '#922B21' }}>{service.name}</p>
+        <div className='flex items-center gap-2 text-sm' style={{ color: '#C0392B' }}>
           <Calendar className='w-4 h-4 flex-shrink-0' />
-          <span className='capitalize font-medium'>
+          <span className='font-semibold capitalize'>
             {format(new Date(date + 'T00:00'), "EEEE d 'de' MMMM yyyy", { locale: es })}
           </span>
         </div>
-        <div className='flex items-center gap-2 text-sm text-primary-700'>
+        <div className='flex items-center gap-2 text-sm' style={{ color: '#C0392B' }}>
           <Clock className='w-4 h-4 flex-shrink-0' />
-          <span className='font-medium'>{time}</span>
+          <span className='font-semibold'>{time}</span>
         </div>
-        <div className='pt-2 border-t border-primary-100'>
-          <span className='font-bold text-primary-700'>{formatCurrency(service.price)}</span>
+        <div className='pt-2' style={{ borderTop: '1px solid #fbd0d0' }}>
+          <span className='font-black' style={{ color: '#922B21' }}>{formatCurrency(service.price)}</span>
         </div>
       </div>
 
@@ -267,9 +272,17 @@ function StepClientForm({ service, date, time, onSubmit, loading, error }) {
           error={errors.customer_phone?.message}
           {...register('customer_phone')}
         />
-        <Button type='submit' loading={loading} className='w-full'>
+        <button
+          type='submit'
+          disabled={loading}
+          className='w-full py-3 rounded-xl text-sm font-bold text-white transition-colors disabled:opacity-50 flex items-center justify-center gap-2'
+          style={{ backgroundColor: '#C0392B' }}
+          onMouseEnter={e => !loading && (e.currentTarget.style.backgroundColor = '#922B21')}
+          onMouseLeave={e => !loading && (e.currentTarget.style.backgroundColor = '#C0392B')}
+        >
+          {loading && <Loader2 className='w-4 h-4 animate-spin' />}
           Reservar ahora
-        </Button>
+        </button>
       </form>
     </div>
   )
@@ -277,41 +290,44 @@ function StepClientForm({ service, date, time, onSubmit, loading, error }) {
 
 // ── Pantalla de éxito ─────────────────────────────────────
 function StepSuccess({ booking, service, tenant }) {
+  const items = [
+    { icon: Scissors, label: 'Servicio',  value: service.name },
+    { icon: Calendar, label: 'Fecha',
+      value: format(new Date(booking.date + 'T00:00'), "EEEE d 'de' MMMM yyyy", { locale: es }) },
+    { icon: Clock,    label: 'Hora',
+      value: `${formatTime(booking.start_time)}${booking.end_time ? ` — ${formatTime(booking.end_time)}` : ''}` },
+    ...(tenant.address ? [{ icon: MapPin, label: 'Dirección', value: tenant.address }] : []),
+    ...(tenant.phone   ? [{ icon: Phone,  label: 'Teléfono',  value: tenant.phone   }] : []),
+  ]
+
   return (
     <div className='text-center py-4'>
       <div className='w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4'
-        style={{ background: 'linear-gradient(135deg, #4F46E5, #7C3AED)' }}>
+        style={{ backgroundColor: '#C0392B' }}>
         <CheckCircle className='w-9 h-9 text-white' />
       </div>
-      <h2 className='text-xl font-bold text-gray-900 mb-1'>¡Reserva confirmada!</h2>
-      <p className='text-gray-500 mb-6'>Te esperamos en <span className='font-semibold text-gray-900'>{tenant.name}</span></p>
+      <h2 className='text-xl font-black text-gray-900 mb-1'>¡Reserva confirmada!</h2>
+      <p className='text-gray-500 mb-6'>
+        Te esperamos en <span className='font-black text-gray-900'>{tenant.name}</span>
+      </p>
 
       <div className='bg-gray-50 border border-gray-100 rounded-2xl p-5 text-left space-y-3 mb-5'>
-        {[
-          { icon: Scissors, label: 'Servicio',  value: service.name },
-          { icon: Calendar, label: 'Fecha',
-            value: format(new Date(booking.date + 'T00:00'), "EEEE d 'de' MMMM yyyy", { locale: es }) },
-          { icon: Clock, label: 'Hora',
-            value: `${formatTime(booking.start_time)}${booking.end_time ? ` — ${formatTime(booking.end_time)}` : ''}` },
-          ...(tenant.address ? [{ icon: MapPin, label: 'Dirección', value: tenant.address }] : []),
-          ...(tenant.phone   ? [{ icon: Phone,  label: 'Teléfono',  value: tenant.phone   }] : []),
-        ].map(({ icon: Icon, label, value }) => (
+        {items.map(({ icon: Icon, label, value }) => (
           <div key={label} className='flex items-start gap-3 text-sm'>
-            <div className='w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0'>
-              <Icon className='w-4 h-4 text-primary-600' />
+            <div className='w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0'
+              style={{ backgroundColor: '#fde8e8' }}>
+              <Icon className='w-4 h-4' style={{ color: '#C0392B' }} />
             </div>
             <div>
               <p className='text-xs text-gray-400 mb-0.5'>{label}</p>
-              <p className='font-semibold text-gray-900 capitalize'>{value}</p>
+              <p className='font-bold text-gray-900 capitalize'>{value}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className='bg-green-50 border border-green-200 rounded-2xl p-4'>
-        <p className='text-sm font-semibold text-green-800'>
-          Recibirás una confirmación por WhatsApp
-        </p>
+      <div className='rounded-2xl p-4' style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}>
+        <p className='text-sm font-bold text-green-800'>Recibirás una confirmación por WhatsApp</p>
         <p className='text-xs text-green-600 mt-0.5'>Revisa tu teléfono en los próximos minutos</p>
       </div>
     </div>
@@ -343,16 +359,16 @@ export default function BookingPage() {
 
   if (loadingTenant) {
     return (
-      <div className='min-h-screen flex items-center justify-center bg-gray-50'>
-        <Loader2 className='w-8 h-8 animate-spin text-primary-600' />
+      <div className='min-h-screen flex items-center justify-center' style={{ backgroundColor: '#0D0D0D' }}>
+        <Loader2 className='w-8 h-8 animate-spin' style={{ color: '#C0392B' }} />
       </div>
     )
   }
   if (tenantError || !tenant) {
     return (
-      <div className='min-h-screen flex items-center justify-center bg-gray-50 p-4 text-center'>
+      <div className='min-h-screen flex items-center justify-center p-4 text-center' style={{ backgroundColor: '#0D0D0D' }}>
         <div>
-          <p className='text-2xl font-bold text-gray-900 mb-2'>Negocio no encontrado</p>
+          <p className='text-2xl font-black text-white mb-2'>Negocio no encontrado</p>
           <p className='text-gray-500'>El enlace puede ser incorrecto o el negocio está inactivo.</p>
         </div>
       </div>
@@ -362,53 +378,76 @@ export default function BookingPage() {
   const isSuccessStep = step === 5
 
   return (
-    <div className='min-h-screen bg-gray-50 flex flex-col'>
+    <div className='min-h-screen flex flex-col bg-gray-50'>
 
-      {/* Hero header */}
-      <div
-        className='text-white'
-        style={{ background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)' }}
-      >
-        <div className='max-w-lg mx-auto px-4 py-8'>
-          <div className='flex items-center gap-4'>
-            <div className='w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0'>
-              <span className='text-2xl font-black text-white'>
-                {tenant.name[0]?.toUpperCase()}
-              </span>
+      {/* Hero negro */}
+      <div style={{ backgroundColor: '#0D0D0D' }}>
+        <div className='max-w-lg mx-auto px-5 py-10'>
+
+          {/* Negocio info */}
+          <div className='flex items-center gap-4 mb-7'>
+            <div
+              className='w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 text-2xl font-black text-white'
+              style={{ backgroundColor: '#1A1A1A', border: '1px solid #2C2C2C' }}
+            >
+              {tenant.name[0]?.toUpperCase()}
             </div>
             <div>
-              <h1 className='text-xl font-bold text-white leading-tight'>{tenant.name}</h1>
+              <h1 className='text-2xl font-black text-white leading-none'>{tenant.name}</h1>
               {tenant.address && (
-                <p className='text-white/70 text-sm mt-0.5 flex items-center gap-1'>
+                <p className='text-sm mt-1 flex items-center gap-1' style={{ color: '#4A4A4A' }}>
                   <MapPin className='w-3.5 h-3.5' />{tenant.address}
                 </p>
               )}
             </div>
           </div>
 
-          {/* Pasos visuales en el hero */}
+          <h2 className='text-3xl font-black leading-tight mb-3' style={{ color: '#C0392B' }}>
+            Reserva tu cita<br />en minutos.
+          </h2>
+
+          {/* Badge online */}
+          <div className='inline-flex items-center gap-2 px-3 py-1.5 rounded-full'
+            style={{ backgroundColor: '#1A1A1A', border: '1px solid #2C2C2C' }}>
+            <span className='relative flex h-2 w-2'>
+              <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75' />
+              <span className='relative inline-flex h-2 w-2 rounded-full bg-green-500' />
+            </span>
+            <span className='text-xs font-bold text-green-400'>En línea</span>
+          </div>
+
+          {/* Barra de progreso */}
           {!isSuccessStep && (
-            <div className='mt-6 flex items-center gap-1'>
-              {STEP_LABELS.map(({ n, label, icon: Icon }, i) => {
+            <div className='mt-7 flex items-center gap-1'>
+              {STEP_LABELS.map((label, i) => {
+                const n      = i + 1
                 const active = step === n
                 const done   = step > n
                 return (
                   <div key={n} className='flex items-center gap-1 flex-1'>
                     <div className='flex items-center gap-1.5 flex-shrink-0'>
-                      <div className={`
-                        w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all
-                        ${done   ? 'bg-white text-primary-600'
-                        : active ? 'bg-white text-primary-700 ring-2 ring-white/40'
-                        :          'bg-white/20 text-white/60'}
-                      `}>
-                        {done ? '✓' : <Icon className='w-3.5 h-3.5' />}
+                      <div
+                        className='w-6 h-6 rounded-full flex items-center justify-center text-xs font-black transition-all'
+                        style={{
+                          backgroundColor: done || active ? '#C0392B' : '#1A1A1A',
+                          color: done || active ? 'white' : '#4A4A4A',
+                          border: active ? '2px solid #E74C3C' : 'none',
+                        }}
+                      >
+                        {done ? '✓' : n}
                       </div>
-                      <span className={`text-xs font-medium hidden sm:block ${active || done ? 'text-white' : 'text-white/50'}`}>
+                      <span
+                        className='text-xs font-semibold hidden sm:block'
+                        style={{ color: active || done ? '#E74C3C' : '#4A4A4A' }}
+                      >
                         {label}
                       </span>
                     </div>
                     {n < STEP_LABELS.length && (
-                      <div className={`flex-1 h-0.5 rounded transition-colors ${done ? 'bg-white/60' : 'bg-white/20'}`} />
+                      <div
+                        className='flex-1 h-0.5 rounded'
+                        style={{ backgroundColor: done ? '#C0392B' : '#2C2C2C' }}
+                      />
                     )}
                   </div>
                 )
@@ -421,7 +460,6 @@ export default function BookingPage() {
       {/* Contenido */}
       <div className='flex-1 max-w-lg mx-auto w-full px-4 py-6 pb-10'>
         <div className='bg-white rounded-2xl shadow-sm border border-gray-100 p-6'>
-
           {step > 1 && !isSuccessStep && (
             <button
               onClick={() => setStep(s => s - 1)}
@@ -442,8 +480,8 @@ export default function BookingPage() {
       {/* Footer */}
       <footer className='py-5 text-center border-t border-gray-100 bg-white'>
         <p className='text-xs text-gray-400'>
-          Reservas gestionadas por{' '}
-          <span className='font-semibold text-primary-600'>AgendaYa</span>
+          Powered by <span className='font-black text-gray-600'>AgendaYa</span>
+          <span className='pulse-dot ml-1' style={{ color: '#C0392B' }}>●</span>
         </p>
       </footer>
     </div>

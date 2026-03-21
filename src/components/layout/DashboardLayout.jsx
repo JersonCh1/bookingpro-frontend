@@ -1,4 +1,4 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom'
+import { Outlet, NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, Calendar, Scissors, Users, Settings,
   LogOut, Menu, X, ExternalLink, Clock,
@@ -24,41 +24,46 @@ export default function DashboardLayout() {
   return (
     <div className='flex h-screen bg-gray-50 overflow-hidden'>
       {sidebarOpen && (
-        <div className='fixed inset-0 z-20 bg-black/50 lg:hidden' onClick={() => setSidebarOpen(false)} />
+        <div className='fixed inset-0 z-20 bg-black/60 lg:hidden' onClick={() => setSidebarOpen(false)} />
       )}
 
       {/* Sidebar */}
-      <aside className={`
-        fixed inset-y-0 left-0 z-30 w-64 flex flex-col
-        transform transition-transform duration-200 ease-in-out
-        lg:static lg:translate-x-0
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}
-        style={{ background: 'linear-gradient(160deg, #4F46E5 0%, #7C3AED 100%)' }}
+      <aside
+        className={`
+          fixed inset-y-0 left-0 z-30 w-64 flex flex-col
+          transform transition-transform duration-200 ease-in-out
+          lg:static lg:translate-x-0
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}
+        style={{ backgroundColor: '#0D0D0D' }}
       >
         {/* Logo */}
-        <div className='flex items-center justify-between h-16 px-6 border-b border-white/10'>
-          <div className='flex items-center gap-2.5'>
-            <div className='w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center'>
-              <Calendar className='w-4 h-4 text-white' />
-            </div>
-            <span className='font-bold text-white text-lg tracking-tight'>AgendaYa</span>
+        <div className='flex items-center justify-between h-16 px-5' style={{ borderBottom: '1px solid #1A1A1A' }}>
+          <div className='flex items-center gap-2'>
+            <span className='pulse-dot text-sm' style={{ color: '#C0392B' }}>●</span>
+            <span className='text-base font-black text-white tracking-tight'>AgendaYa</span>
           </div>
-          <button className='lg:hidden p-1 rounded hover:bg-white/10 text-white' onClick={() => setSidebarOpen(false)}>
+          <button
+            className='lg:hidden p-1 rounded text-gray-500 hover:text-white transition-colors'
+            onClick={() => setSidebarOpen(false)}
+          >
             <X className='w-5 h-5' />
           </button>
         </div>
 
         {/* Tenant info */}
         {tenant && (
-          <div className='px-5 py-4 border-b border-white/10'>
-            <p className='text-xs text-white/50 uppercase tracking-wide font-medium'>Negocio</p>
-            <p className='text-sm font-semibold text-white mt-0.5 truncate'>{tenant.name}</p>
+          <div className='px-5 py-4' style={{ borderBottom: '1px solid #1A1A1A' }}>
+            <p className='text-xs font-bold uppercase tracking-wider mb-1' style={{ color: '#4A4A4A' }}>
+              Negocio
+            </p>
+            <p className='text-sm font-semibold text-white truncate'>{tenant.name}</p>
             <a
               href={`/book/${tenant.slug}`}
               target='_blank'
               rel='noopener noreferrer'
-              className='inline-flex items-center gap-1 text-xs text-white/60 hover:text-white mt-1 transition-colors'
+              className='inline-flex items-center gap-1 text-xs mt-1 transition-colors hover:text-white'
+              style={{ color: '#4A4A4A' }}
             >
               Ver página pública <ExternalLink className='w-3 h-3' />
             </a>
@@ -66,46 +71,64 @@ export default function DashboardLayout() {
         )}
 
         {/* Nav */}
-        <nav className='flex-1 px-3 py-4 space-y-0.5'>
+        <nav className='flex-1 px-2 py-3 space-y-0.5'>
           {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
               end={end}
-              className={({ isActive }) => `
-                flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                ${isActive
-                  ? 'bg-white/20 text-white'
-                  : 'text-white/70 hover:bg-white/10 hover:text-white'}
-              `}
               onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) => `
+                flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all
+                border-l-[3px]
+                ${isActive
+                  ? 'text-white border-l-primary-600'
+                  : 'text-gray-500 border-l-transparent hover:text-white'}
+              `}
+              style={({ isActive }) => ({
+                backgroundColor: isActive ? '#1A1A1A' : 'transparent',
+              })}
+              onMouseEnter={e => {
+                if (!e.currentTarget.classList.contains('text-white')) {
+                  e.currentTarget.style.backgroundColor = '#1A1A1A'
+                }
+              }}
+              onMouseLeave={e => {
+                if (!e.currentTarget.style.borderLeftColor?.includes('192')) {
+                  e.currentTarget.style.backgroundColor = 'transparent'
+                }
+              }}
             >
-              <Icon className='w-5 h-5 flex-shrink-0' />
+              <Icon className='w-4 h-4 flex-shrink-0' />
               {label}
             </NavLink>
           ))}
         </nav>
 
-        {/* User */}
-        <div className='px-3 py-4 border-t border-white/10'>
+        {/* User section */}
+        <div className='px-2 py-3' style={{ borderTop: '1px solid #1A1A1A' }}>
           <div className='flex items-center gap-3 px-3 py-2 mb-1'>
-            <div className='w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0'>
-              <span className='text-white text-sm font-semibold'>
-                {user?.first_name?.[0] || user?.username?.[0] || '?'}
-              </span>
+            <div
+              className='w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold text-white'
+              style={{ backgroundColor: '#C0392B' }}
+            >
+              {user?.first_name?.[0] || user?.username?.[0] || '?'}
             </div>
             <div className='min-w-0'>
-              <p className='text-sm font-medium text-white truncate'>
+              <p className='text-sm font-semibold text-white truncate'>
                 {user?.first_name} {user?.last_name}
               </p>
-              <p className='text-xs text-white/50 truncate'>{user?.email}</p>
+              <p className='text-xs truncate' style={{ color: '#4A4A4A' }}>{user?.email}</p>
             </div>
           </div>
           <button
             onClick={logout}
-            className='flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-white/60 hover:bg-white/10 hover:text-white transition-colors'
+            className='flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm transition-colors'
+            style={{ color: '#4A4A4A' }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#E74C3C'; e.currentTarget.style.backgroundColor = '#1A1A1A' }}
+            onMouseLeave={e => { e.currentTarget.style.color = '#4A4A4A'; e.currentTarget.style.backgroundColor = 'transparent' }}
           >
-            <LogOut className='w-5 h-5' />
+            <LogOut className='w-4 h-4' />
             Cerrar sesión
           </button>
         </div>
@@ -117,7 +140,7 @@ export default function DashboardLayout() {
           <button onClick={() => setSidebarOpen(true)} className='p-2 rounded-lg hover:bg-gray-100'>
             <Menu className='w-5 h-5' />
           </button>
-          <span className='font-bold text-gray-900'>AgendaYa</span>
+          <span className='font-black text-gray-900'>AgendaYa</span>
         </header>
         <main className='flex-1 p-6'>
           <Outlet />
