@@ -271,12 +271,32 @@ function Pricing() {
           <h2 className='text-3xl sm:text-4xl font-black text-white'>Sin sorpresas</h2>
         </div>
 
-        <div className='rounded-2xl p-8 text-center'
-          style={{ backgroundColor: '#0D0D0D', border: '2px solid #C0392B33', boxShadow: '0 0 60px rgba(192,57,43,0.08)' }}>
-          <div className='flex items-baseline justify-center gap-2 mb-1'>
-            <span className='text-5xl font-black text-white'>S/. 80</span>
-            <span className='text-gray-500 font-medium'>/ mes</span>
+        <div className='relative rounded-2xl p-8 text-center pricing-glow'
+          style={{ backgroundColor: '#0D0D0D', border: '2px solid #C0392B', boxShadow: '0 0 40px rgba(192,57,43,0.25), 0 0 80px rgba(192,57,43,0.1)' }}>
+
+          {/* Badge oferta de lanzamiento */}
+          <div className='inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full mb-5'
+            style={{ backgroundColor: 'rgba(192,57,43,0.15)', border: '1px solid rgba(192,57,43,0.5)' }}>
+            <span className='w-1.5 h-1.5 rounded-full animate-pulse' style={{ backgroundColor: '#E74C3C' }} />
+            <span className='text-xs font-black uppercase tracking-widest' style={{ color: '#E74C3C' }}>
+              🔥 Oferta de lanzamiento
+            </span>
           </div>
+
+          {/* Precio */}
+          <div className='flex items-start justify-center gap-1 mb-1'>
+            <span className='text-2xl font-black text-gray-400 mt-3'>S/.</span>
+            <span className='text-8xl font-black leading-none' style={{ color: '#C0392B' }}>69</span>
+            <div className='flex flex-col items-start mt-3 ml-1'>
+              <span className='text-sm font-medium text-gray-500 line-through'>S/. 120</span>
+              <span className='text-sm font-medium text-gray-500'>/ mes</span>
+            </div>
+          </div>
+
+          {/* Tiempo limitado */}
+          <p className='text-xs mb-1' style={{ color: '#E74C3C' }}>
+            ⏰ Precio especial por tiempo limitado
+          </p>
           <p className='text-xs text-gray-600 mb-7'>Sin contrato · Cancela cuando quieras</p>
 
           <ul className='space-y-3 mb-8 text-left'>

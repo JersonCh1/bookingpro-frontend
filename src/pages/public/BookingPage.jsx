@@ -685,9 +685,20 @@ export default function BookingPage() {
                   {tenant.address || tenant.city}
                 </p>
               )}
+              {tenant.phone && (
+                <p className='text-sm flex items-center gap-1.5 mt-0.5' style={{ color: '#666' }}>
+                  <Phone className='w-3.5 h-3.5' />
+                  {tenant.phone}
+                </p>
+              )}
             </div>
           </div>
 
+          {tenant.description && (
+            <p className='text-sm mb-4 leading-relaxed' style={{ color: '#888' }}>
+              {tenant.description}
+            </p>
+          )}
           <p className='text-2xl font-black text-white leading-tight mb-1'>
             Reserva tu cita <span style={{ color: '#C0392B' }}>en línea</span>
           </p>

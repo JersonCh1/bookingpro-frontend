@@ -17,6 +17,7 @@ const schema = z.object({
   email:         z.string().email('Email inválido'),
   address:       z.string().optional(),
   city:          z.string().optional(),
+  description:   z.string().optional(),
 })
 
 const TYPES = [
@@ -36,6 +37,7 @@ export default function Settings() {
       email:         tenant?.email         || '',
       address:       tenant?.address       || '',
       city:          tenant?.city          || '',
+      description:   tenant?.description   || '',
     },
   })
 
@@ -112,6 +114,16 @@ export default function Settings() {
           <div className='grid grid-cols-2 gap-4'>
             <Input label='Dirección' {...register('address')} />
             <Input label='Ciudad'    {...register('city')} />
+          </div>
+          <div className='flex flex-col gap-1.5'>
+            <label className='text-sm font-medium text-gray-700'>Descripción del negocio</label>
+            <textarea
+              rows={3}
+              placeholder='Ej: Salón de belleza con 10 años de experiencia...'
+              className='w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-400 resize-none'
+              {...register('description')}
+            />
+            <p className='text-xs text-gray-400'>Se mostrará en tu página pública de reservas</p>
           </div>
           <Button type='submit' loading={isPending}>
             Guardar cambios

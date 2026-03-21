@@ -133,12 +133,15 @@ export default function Login() {
               >{c}</span>
             ))}
           </div>
-          <div className='rounded-2xl p-5 mb-8' style={{ backgroundColor: '#111', border: '1px solid #C0392B22' }}>
-            <p className='text-[10px] font-bold uppercase tracking-widest mb-2' style={{ color: '#C0392B' }}>
-              ✦ Precio único en Perú
-            </p>
+          <div className='rounded-2xl p-5 mb-8' style={{ backgroundColor: '#111', border: '1px solid #C0392B55', boxShadow: '0 0 20px rgba(192,57,43,0.12)' }}>
+            <div className='inline-flex items-center gap-1 px-2 py-0.5 rounded-full mb-2'
+              style={{ backgroundColor: 'rgba(192,57,43,0.15)', border: '1px solid rgba(192,57,43,0.4)' }}>
+              <span className='w-1 h-1 rounded-full animate-pulse' style={{ backgroundColor: '#E74C3C' }} />
+              <span className='text-[9px] font-black uppercase tracking-widest' style={{ color: '#E74C3C' }}>Lanzamiento</span>
+            </div>
             <div className='flex items-baseline gap-2 mb-1'>
-              <span className='text-3xl font-black text-white'>S/. 80</span>
+              <span className='text-3xl font-black text-white'>S/. 69</span>
+              <span className='text-sm font-medium line-through' style={{ color: '#555' }}>S/. 120</span>
               <span className='text-sm font-medium' style={{ color: '#777' }}>/&nbsp;mes</span>
             </div>
             <p className='text-xs' style={{ color: '#666' }}>Sin contrato · Cancela cuando quieras</p>
