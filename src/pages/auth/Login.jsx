@@ -167,11 +167,27 @@ export default function Login() {
       </div>
 
       {/* ══ PANEL DERECHO 48% ══ */}
-      <div className='w-full lg:w-[48%] flex items-center justify-center px-8 py-10 relative'
+      <div className='w-full lg:w-[48%] flex items-center justify-center px-8 py-10 relative overflow-hidden'
         style={{ backgroundColor: '#F5F0EB' }}>
 
-        <div className='absolute top-0 right-0 w-48 h-48 pointer-events-none' style={{
-          background: 'radial-gradient(circle at top right, rgba(192,57,43,0.08), transparent 70%)',
+        {/* ── Efectos panel derecho ── */}
+        {/* Línea roja top */}
+        <div className='absolute top-0 left-0 right-0 h-[2px] pointer-events-none' style={{
+          background: 'linear-gradient(90deg, transparent, #C0392B 35%, #E74C3C 65%, transparent)',
+        }} />
+        {/* Orb top-right */}
+        <div className='absolute -top-32 -right-32 w-96 h-96 rounded-full pointer-events-none' style={{
+          background: 'radial-gradient(circle, rgba(192,57,43,0.09) 0%, transparent 65%)',
+        }} />
+        {/* Orb bottom-left */}
+        <div className='absolute -bottom-24 -left-24 w-72 h-72 rounded-full pointer-events-none' style={{
+          background: 'radial-gradient(circle, rgba(192,57,43,0.06) 0%, transparent 65%)',
+        }} />
+        {/* Dot grid sutil */}
+        <div className='absolute inset-0 pointer-events-none' style={{
+          backgroundImage: 'radial-gradient(rgba(192,57,43,0.13) 1px, transparent 1px)',
+          backgroundSize: '26px 26px',
+          opacity: 0.55,
         }} />
 
         <div className='w-full max-w-sm relative z-10'>
