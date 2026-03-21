@@ -65,7 +65,7 @@ const inputCls = (err) =>
   `auth-input w-full px-4 py-3 rounded-xl text-sm text-gray-900 font-medium bg-gray-50 border placeholder:text-gray-300 ${err ? 'border-red-300' : 'border-gray-200'}`
 
 export default function Login() {
-  const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(schema) })
+  const { register, handleSubmit, setError, formState: { errors } } = useForm({ resolver: zodResolver(schema) })
   const { mutate, isPending, error } = useLogin()
 
   // Mensaje de error: 401 → credenciales incorrectas, otro → mensaje del API
@@ -223,20 +223,43 @@ export default function Login() {
               </div>
             )}
 
-            {/* noValidate + register directo en <input> para que RHF lea el ref correctamente */}
-            <form noValidate onSubmit={handleSubmit(d => mutate(d))} className='space-y-5'>
+            <form
+              noValidate={true}
+              onSubmit={handleSubmit(
+                (d) => mutate(d),
+                (formErrors) => {
+                  // Validación manual explícita — mensajes en español
+                  if (!formErrors.email && !document.querySelector('[name=email]')?.value) {
+                    setError('email', { message: 'Ingresa tu email' })
+                  }
+                  if (!formErrors.password && !document.querySelector('[name=password]')?.value) {
+                    setError('password', { message: 'Ingresa tu contraseña' })
+                  }
+                }
+              )}
+              className='space-y-5'
+            >
               <div className='form-item-2'>
                 <FieldWrap label='Correo electrónico' error={errors.email?.message}>
-                  <input type='email' placeholder='tu@negocio.com' autoComplete='email'
+                  {/* type='text' evita validación nativa del browser para email */}
+                  <input
+                    type='text'
+                    placeholder='tu@negocio.com'
+                    autoComplete='email'
                     className={inputCls(errors.email)}
-                    {...register('email')} />
+                    {...register('email', { required: false })}
+                  />
                 </FieldWrap>
               </div>
               <div className='form-item-3'>
                 <FieldWrap label='Contraseña' error={errors.password?.message}>
-                  <input type='password' placeholder='••••••••' autoComplete='current-password'
+                  <input
+                    type='password'
+                    placeholder='••••••••'
+                    autoComplete='current-password'
                     className={inputCls(errors.password)}
-                    {...register('password')} />
+                    {...register('password', { required: false })}
+                  />
                 </FieldWrap>
               </div>
 
