@@ -53,6 +53,7 @@ export default function DashboardLayout() {
             onMouseEnter={e => { e.currentTarget.style.color = 'white'; e.currentTarget.style.backgroundColor = '#1A1A1A' }}
             onMouseLeave={e => { e.currentTarget.style.color = '#4A4A4A'; e.currentTarget.style.backgroundColor = 'transparent' }}
             onClick={() => setSidebarOpen(false)}
+            aria-label='Cerrar menú'
           >
             <X className='w-5 h-5' />
           </button>
@@ -64,7 +65,16 @@ export default function DashboardLayout() {
             <p className='text-[10px] font-bold uppercase tracking-widest mb-1.5' style={{ color: '#4A4A4A' }}>
               Negocio
             </p>
-            <p className='text-sm font-semibold text-white truncate leading-snug'>{tenant.name}</p>
+            <div className='flex items-center gap-2'>
+              <p className='text-sm font-semibold text-white truncate leading-snug'>{tenant.name}</p>
+              <div className='relative flex-shrink-0 group'>
+                <span className='w-2 h-2 rounded-full bg-green-400 animate-pulse block' />
+                <span className='absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-0.5 rounded text-[10px] whitespace-nowrap font-medium pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity'
+                  style={{ backgroundColor: '#1A1A1A', color: '#4ade80', border: '1px solid #2a2a2a' }}>
+                  Tu página está activa
+                </span>
+              </div>
+            </div>
             <a
               href={`/book/${tenant.slug}`}
               target='_blank'

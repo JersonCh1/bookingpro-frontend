@@ -12,16 +12,20 @@ import { formatCurrency } from '../../utils/helpers'
 const schema = z.object({
   name:        z.string().min(1, 'Requerido'),
   description: z.string().optional(),
+  image_url:   z.string().url('URL inválida').optional().or(z.literal('')),
   duration:    z.coerce.number().min(15, 'Mínimo 15 min'),
   price:       z.coerce.number().min(0, 'Precio inválido'),
   is_active:   z.boolean().optional(),
 })
 
 function ServiceForm({ defaultValues, onSubmit, loading }) {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: { is_active: true, ...defaultValues },
   })
+  const descValue = watch('description') || ''
+  const imageUrl = watch('image_url') || ''
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
       <Input
@@ -31,13 +35,39 @@ function ServiceForm({ defaultValues, onSubmit, loading }) {
         {...register('name')}
       />
       <div>
-        <label className='block text-sm font-medium text-gray-700 mb-1'>Descripción (opcional)</label>
+        <div className='flex items-center justify-between mb-1'>
+          <label className='block text-sm font-medium text-gray-700'>Descripción (opcional)</label>
+          <span className={`text-xs ${descValue.length > 130 ? 'text-red-500' : 'text-gray-400'}`}>
+            {descValue.length}/150
+          </span>
+        </div>
         <textarea
           className='input resize-none'
           rows={2}
-          placeholder='Descripción breve del servicio...'
+          maxLength={150}
+          placeholder='Ej: Incluye lavado y secado, productos premium'
           {...register('description')}
         />
+      </div>
+      <div>
+        <label className='block text-sm font-medium text-gray-700 mb-1'>Imagen del servicio (opcional)</label>
+        <input
+          type='url'
+          placeholder='https://... (URL de imagen)'
+          className='input'
+          {...register('image_url')}
+        />
+        {errors.image_url && <p className='mt-1 text-xs text-red-500'>{errors.image_url.message}</p>}
+        {imageUrl && (() => {
+          try {
+            new URL(imageUrl)
+            return (
+              <img src={imageUrl} alt='Preview'
+                className='mt-2 h-20 w-full object-cover rounded-lg border border-gray-200'
+                onError={e => { e.target.style.display = 'none' }} />
+            )
+          } catch { return null }
+        })()}
       </div>
       <div className='grid grid-cols-2 gap-4'>
         <Input
@@ -115,8 +145,11 @@ export default function Services() {
           {services.map(s => (
             <div key={s.id} className={`card p-5 hover:shadow-md transition-shadow ${!s.is_active ? 'opacity-60' : ''}`}>
               <div className='flex items-start justify-between mb-3'>
-                <div className='w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center flex-shrink-0'>
-                  <Scissors className='w-5 h-5 text-primary-600' />
+                <div className='w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden'>
+                  {s.image_url
+                    ? <img src={s.image_url} alt={s.name} className='w-full h-full object-cover rounded-xl' onError={e => { e.target.style.display = 'none' }} />
+                    : <Scissors className='w-5 h-5 text-primary-600' />
+                  }
                 </div>
                 <div className='flex gap-1'>
                   <button

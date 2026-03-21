@@ -174,28 +174,28 @@ export default function Overview() {
             value={todayTotal}
             subtitle={todayPending > 0 ? `${todayPending} pendientes` : 'Todo confirmado'}
             icon={Calendar}
-            colorClass='bg-blue-50 text-blue-600'
+            colorClass='bg-red-50 text-red-700'
           />
           <StatCard
             title='Esta semana'
             value={weekTotal}
             subtitle='Reservas acumuladas'
             icon={Clock}
-            colorClass='bg-purple-50 text-purple-600'
+            colorClass='bg-red-50 text-red-700'
           />
           <StatCard
             title='Completadas mes'
             value={stats?.month?.by_status?.completed ?? 0}
             subtitle={`de ${stats?.month?.total ?? 0} reservas`}
             icon={CheckCircle}
-            colorClass='bg-green-50 text-green-600'
+            colorClass='bg-red-50 text-red-700'
           />
           <StatCard
             title='Ingresos del mes'
             value={formatCurrency(monthRevenue)}
             subtitle='Citas completadas'
             icon={TrendingUp}
-            colorClass='bg-yellow-50 text-yellow-600'
+            colorClass='bg-red-50 text-red-700'
           />
         </div>
       )}

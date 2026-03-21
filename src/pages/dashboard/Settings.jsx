@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -24,9 +24,29 @@ const TYPES = [
   'salon', 'barberia', 'spa', 'consultorio', 'estudio', 'gym', 'otro',
 ]
 
+function Toast({ message, type = 'success', onClose }) {
+  useEffect(() => {
+    const t = setTimeout(onClose, 3000)
+    return () => clearTimeout(t)
+  }, [onClose])
+  return (
+    <div className='fixed top-5 right-5 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg text-sm font-medium'
+      style={{
+        backgroundColor: type === 'success' ? '#f0fdf4' : '#fef2f2',
+        border: `1px solid ${type === 'success' ? '#bbf7d0' : '#fecaca'}`,
+        color: type === 'success' ? '#166534' : '#991b1b',
+      }}>
+      <span>{type === 'success' ? '✓' : '✗'}</span>
+      <span>{message}</span>
+      <button onClick={onClose} className='ml-2 opacity-60 hover:opacity-100' aria-label='Cerrar'>×</button>
+    </div>
+  )
+}
+
 export default function Settings() {
   const { tenant, updateTenant } = useAuthStore()
   const [copied, setCopied] = useState(false)
+  const [toast, setToast] = useState(null)
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
@@ -41,9 +61,15 @@ export default function Settings() {
     },
   })
 
-  const { mutate, isPending, isSuccess } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: (data) => authApi.updateTenant(data).then(r => r.data.data),
-    onSuccess:  (data) => updateTenant(data),
+    onSuccess: (data) => {
+      updateTenant(data)
+      setToast({ message: '✓ Cambios guardados correctamente', type: 'success' })
+    },
+    onError: () => {
+      setToast({ message: 'Error al guardar. Intenta de nuevo', type: 'error' })
+    },
   })
 
   const publicUrl = `${window.location.origin}/book/${tenant?.slug}`
@@ -56,6 +82,8 @@ export default function Settings() {
 
   return (
     <div className='space-y-6 max-w-2xl'>
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+
       <div>
         <h1 className='text-2xl font-bold text-gray-900'>Ajustes</h1>
         <p className='text-gray-500 text-sm mt-0.5'>Información de tu negocio</p>
@@ -71,12 +99,15 @@ export default function Settings() {
           </div>
           <button
             onClick={copyUrl}
-            className='p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors'
-            title='Copiar'
+            aria-label='Copiar enlace'
+            className='flex items-center gap-1.5 px-3 py-2 rounded-lg border transition-all text-sm font-medium'
+            style={{
+              borderColor: copied ? '#bbf7d0' : '#e5e7eb',
+              backgroundColor: copied ? '#f0fdf4' : 'white',
+              color: copied ? '#166534' : '#6b7280',
+            }}
           >
-            {copied
-              ? <Check className='w-4 h-4 text-green-600' />
-              : <Copy  className='w-4 h-4 text-gray-500' />}
+            {copied ? <><Check className='w-4 h-4' /> Copiado!</> : <><Copy className='w-4 h-4' /> Copiar</>}
           </button>
           <a
             href={publicUrl}
@@ -92,12 +123,6 @@ export default function Settings() {
       {/* Formulario */}
       <div className='card p-6'>
         <h2 className='font-semibold text-gray-900 mb-4'>Datos del negocio</h2>
-
-        {isSuccess && (
-          <div className='mb-4 p-3 bg-green-50 border border-green-200 rounded-lg'>
-            <p className='text-sm text-green-700'>Cambios guardados</p>
-          </div>
-        )}
 
         <form onSubmit={handleSubmit(mutate)} className='space-y-4'>
           <div className='grid grid-cols-2 gap-4'>

@@ -2,9 +2,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link } from 'react-router-dom'
-import { Loader2, ArrowRight } from 'lucide-react'
+import { Loader2, ArrowRight, Eye, EyeOff } from 'lucide-react'
 import { useLogin } from '../../hooks/useAuth'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { LogoFull } from '../../components/ui/Logo'
 
 const schema = z.object({
@@ -22,7 +22,7 @@ const PARTICLES = Array.from({ length: 22 }, (_, i) => ({
 }))
 
 const STATS = [
-  { suffix: '+', target: 500, label: 'negocios activos' },
+  { fixed: 'Nuevo', label: 'en Arequipa' },
   { fixed: '24/7', label: 'disponibilidad' },
   { fixed: '0',   label: 'llamadas perdidas' },
 ]
@@ -67,6 +67,7 @@ const inputCls = (err) =>
 export default function Login() {
   const { register, handleSubmit, setError, formState: { errors } } = useForm({ resolver: zodResolver(schema) })
   const { mutate, isPending, error } = useLogin()
+  const [showPwd, setShowPwd] = useState(false)
 
   // Mensaje de error: 401 → credenciales incorrectas, otro → mensaje del API
   const apiMsg = error?.response?.status === 401
@@ -117,7 +118,7 @@ export default function Login() {
             {STATS.map(s => (
               <div key={s.label}>
                 <p className='text-3xl font-black' style={{ color: '#C0392B' }}>
-                  {s.target != null ? <CountUp target={s.target} suffix={s.suffix} /> : s.fixed}
+                  {s.fixed}
                 </p>
                 <p className='text-xs text-gray-400 mt-1 font-medium'>{s.label}</p>
               </div>
@@ -148,7 +149,7 @@ export default function Login() {
           </div>
           <blockquote className='pl-4 text-xs italic leading-relaxed' style={{ color: '#777', borderLeft: '2px solid #3A3A3A' }}>
             "Antes perdíamos citas por no contestar. Ahora todo es automático."
-            <span className='block mt-1 not-italic' style={{ color: '#555' }}>— Cliente desde 2024 · Arequipa</span>
+            <span className='block mt-1 not-italic' style={{ color: '#555' }}>— Sé el primero en probarlo · Arequipa, Perú</span>
           </blockquote>
         </div>
 
@@ -256,13 +257,22 @@ export default function Login() {
               </div>
               <div className='form-item-3'>
                 <FieldWrap label='Contraseña' error={errors.password?.message}>
-                  <input
-                    type='password'
-                    placeholder='••••••••'
-                    autoComplete='current-password'
-                    className={inputCls(errors.password)}
-                    {...register('password', { required: false })}
-                  />
+                  <div className='relative'>
+                    <input
+                      type={showPwd ? 'text' : 'password'}
+                      placeholder='••••••••'
+                      autoComplete='current-password'
+                      className={inputCls(errors.password) + ' pr-11'}
+                      {...register('password', { required: false })}
+                    />
+                    <button type='button' onClick={() => setShowPwd(v => !v)}
+                      className='absolute right-3 top-1/2 -translate-y-1/2 p-1 transition-colors'
+                      style={{ color: showPwd ? '#C0392B' : '#9ca3af' }}
+                      aria-label={showPwd ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    >
+                      {showPwd ? <EyeOff className='w-4 h-4' /> : <Eye className='w-4 h-4' />}
+                    </button>
+                  </div>
                 </FieldWrap>
               </div>
 

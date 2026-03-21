@@ -2,17 +2,17 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link } from 'react-router-dom'
-import { CheckCircle, Loader2, ArrowRight } from 'lucide-react'
+import { CheckCircle, Loader2, ArrowRight, Eye, EyeOff } from 'lucide-react'
 import { useRegister } from '../../hooks/useAuth'
 import Input from '../../components/ui/Input'
 import Select from '../../components/ui/Select'
 import { LogoFull } from '../../components/ui/Logo'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const schema = z.object({
   name:          z.string().min(2, 'Mínimo 2 caracteres'),
   business_type: z.string().min(1, 'Selecciona un tipo'),
-  phone:         z.string().min(7, 'Teléfono requerido'),
+  phone:         z.string().regex(/^(\+51)?9\d{8}$/, 'Ingresa un número WhatsApp válido (9 dígitos)'),
   city:          z.string().optional(),
   first_name:    z.string().min(1, 'Requerido'),
   last_name:     z.string().min(1, 'Requerido'),
@@ -69,6 +69,73 @@ function CountUp({ target, suffix = '' }) {
   return <span ref={ref}>0{suffix}</span>
 }
 
+/* ── Modal de Términos ── */
+const TERMS_CONTENT = {
+  terminos: {
+    title: 'Términos de Uso',
+    content: `AgendaYa es un sistema de reservas online para negocios peruanos.
+
+USO DEL SERVICIO
+Al registrarte, aceptas usar la plataforma únicamente para gestionar reservas de tu negocio de forma legítima.
+
+PAGO
+El servicio tiene un costo de S/. 69/mes en oferta de lanzamiento. El pago se realiza mensualmente y puedes cancelar en cualquier momento.
+
+CANCELACIÓN
+Puedes cancelar tu suscripción cuando quieras. No hay contratos ni penalidades.
+
+RESPONSABILIDAD
+AgendaYa no se responsabiliza por reservas no atendidas o problemas entre el negocio y sus clientes.`,
+  },
+  privacidad: {
+    title: 'Política de Privacidad',
+    content: `En cumplimiento de la Ley N° 29733 — Ley de Protección de Datos Personales del Perú.
+
+DATOS QUE RECOPILAMOS
+• Datos del negocio: nombre, teléfono, dirección, tipo de negocio
+• Datos de acceso: email y contraseña (encriptada)
+• Datos de clientes que reservan: nombre, teléfono, email (opcional)
+
+CÓMO LOS USAMOS
+• Para enviar notificaciones de reservas por WhatsApp
+• Para mostrar tu página pública de reservas
+• Para estadísticas de uso del negocio
+
+NO VENDEMOS TUS DATOS
+Tus datos y los de tus clientes no se venden ni comparten con terceros.
+
+CONTACTO
+Para solicitar eliminación de datos: soporte@agendaya.pe`,
+  },
+}
+
+function TermsModal({ type, onClose }) {
+  if (!type) return null
+  const content = TERMS_CONTENT[type]
+  return (
+    <div className='fixed inset-0 z-50 flex items-center justify-center p-4'
+      style={{ backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}
+      onClick={onClose}>
+      <div className='bg-white rounded-2xl p-6 max-w-md w-full max-h-[80vh] overflow-y-auto shadow-2xl'
+        onClick={e => e.stopPropagation()}>
+        <div className='flex items-center justify-between mb-4'>
+          <h3 className='font-black text-gray-900 text-lg'>{content.title}</h3>
+          <button onClick={onClose} aria-label='Cerrar'
+            className='p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors'>
+            ✕
+          </button>
+        </div>
+        <p className='text-sm text-gray-600 leading-relaxed whitespace-pre-line'>{content.content}</p>
+        <button onClick={onClose}
+          className='mt-5 w-full py-3 rounded-xl text-sm font-bold text-white'
+          style={{ backgroundColor: '#C0392B' }}>
+          Entendido
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function Register() {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
@@ -76,6 +143,8 @@ export default function Register() {
   })
   const { mutate, isPending, error } = useRegister()
   const msg = error?.response?.data?.error ?? null
+  const [showPwd, setShowPwd] = useState(false)
+  const [termsModal, setTermsModal] = useState(null) // null | 'terminos' | 'privacidad'
 
   return (
     <div className='flex min-h-screen lg:h-screen' style={{ backgroundColor: '#0D0D0D' }}>
@@ -131,9 +200,9 @@ export default function Register() {
           {/* Stats */}
           <div className='flex gap-8 mb-7'>
             {[
-              { el: <CountUp target={500} suffix='+' />, label: 'negocios' },
               { el: <CountUp target={2} suffix=' min' />, label: 'para configurar' },
               { el: <span>24/7</span>, label: 'online' },
+              { el: <span>Nuevo</span>, label: 'en Arequipa' },
             ].map(({ el, label }) => (
               <div key={label}>
                 <p className='text-2xl font-black' style={{ color: '#C0392B' }}>{el}</p>
@@ -274,7 +343,12 @@ export default function Register() {
                     <option value=''>Seleccionar...</option>
                     {BUSINESS_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                   </Select>
-                  <Input label='Ciudad' placeholder='Arequipa' {...register('city')} />
+                  <Select label='Ciudad' {...register('city')}>
+                    <option value=''>Seleccionar ciudad...</option>
+                    {['Arequipa','Lima','Cusco','Trujillo','Piura','Chiclayo','Iquitos','Huancayo','Tacna','Puno','Otro'].map(c => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </Select>
                 </div>
 
                 <Input label='Teléfono / WhatsApp' placeholder='+51 987 654 321'
@@ -300,8 +374,26 @@ export default function Register() {
                 <Input label='Correo electrónico' type='email' placeholder='tu@negocio.com'
                   autoComplete='email' error={errors.email?.message} {...register('email')} />
 
-                <Input label='Contraseña' type='password' placeholder='Mínimo 8 caracteres'
-                  autoComplete='new-password' error={errors.password?.message} {...register('password')} />
+                <div>
+                  <label className='block text-xs font-medium text-gray-700 mb-1.5'>Contraseña</label>
+                  <div className='relative'>
+                    <input
+                      type={showPwd ? 'text' : 'password'}
+                      placeholder='Mínimo 8 caracteres'
+                      autoComplete='new-password'
+                      className={`auth-input w-full px-4 py-3 rounded-xl text-sm bg-gray-50 border pr-11 ${errors.password ? 'border-red-300' : 'border-gray-200'}`}
+                      {...register('password')}
+                    />
+                    <button type='button' onClick={() => setShowPwd(v => !v)}
+                      className='absolute right-3 top-1/2 -translate-y-1/2 p-1 transition-colors'
+                      style={{ color: showPwd ? '#C0392B' : '#9ca3af' }}
+                      aria-label={showPwd ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    >
+                      {showPwd ? <EyeOff className='w-4 h-4' /> : <Eye className='w-4 h-4' />}
+                    </button>
+                  </div>
+                  {errors.password && <p className='mt-1.5 text-xs text-red-500 font-medium'>{errors.password.message}</p>}
+                </div>
               </div>
 
               <button type='submit' disabled={isPending}
@@ -313,13 +405,23 @@ export default function Register() {
               </button>
 
               <p className='text-[11px] text-center text-gray-400'>
-                Al registrarte aceptas los{' '}
-                <span className='underline cursor-pointer' style={{ color: '#C0392B' }}>términos de servicio</span>.
+                Al crear tu cuenta aceptas nuestros{' '}
+                <button type='button' onClick={() => setTermsModal('terminos')}
+                  className='underline font-medium' style={{ color: '#C0392B' }}>
+                  Términos de uso
+                </button>
+                {' '}y{' '}
+                <button type='button' onClick={() => setTermsModal('privacidad')}
+                  className='underline font-medium' style={{ color: '#C0392B' }}>
+                  Política de privacidad
+                </button>
               </p>
             </form>
           </div>
         </div>
       </div>
+
+      <TermsModal type={termsModal} onClose={() => setTermsModal(null)} />
     </div>
   )
 }

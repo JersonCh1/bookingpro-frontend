@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useBookings, useUpdateBookingStatus, useStaff } from '../../hooks/useBookings'
 import { StatusBadge } from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
@@ -25,13 +25,18 @@ const STATUS_ACTIONS = [
 export default function Bookings() {
   const [filters, setFilters]   = useState({ status: '', search: '', date_from: '', date_to: '' })
   const [selected, setSelected] = useState(null)
+  const [page, setPage]         = useState(1)
 
-  const { data, isLoading }                        = useBookings(filters)
+  const { data, isLoading }                        = useBookings({ ...filters, page })
   const { mutate: updateStatus, isPending: saving } = useUpdateBookingStatus()
   const { data: staffData }                         = useStaff()
   const staffList = Array.isArray(staffData) ? staffData : (staffData?.results ?? [])
 
-  const bookings = data?.results ?? []
+  const bookings   = data?.results ?? []
+  const totalCount = data?.count ?? 0
+  const totalPages = Math.ceil(totalCount / 20)
+
+  useEffect(() => { setPage(1) }, [filters])
 
   const handleStatusChange = (booking, newStatus) => {
     updateStatus(
@@ -211,6 +216,29 @@ export default function Bookings() {
             ))}
           </div>
         </>
+      )}
+
+      {/* Paginación */}
+      {totalPages > 1 && (
+        <div className='flex items-center justify-between px-4 py-3 card'>
+          <button
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className='text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-200 disabled:opacity-40 hover:bg-gray-50 transition-colors'
+          >
+            ← Anterior
+          </button>
+          <span className='text-sm text-gray-500'>
+            Página <span className='font-bold text-gray-900'>{page}</span> de <span className='font-bold text-gray-900'>{totalPages}</span>
+          </span>
+          <button
+            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className='text-sm font-medium px-3 py-1.5 rounded-lg border border-gray-200 disabled:opacity-40 hover:bg-gray-50 transition-colors'
+          >
+            Siguiente →
+          </button>
+        </div>
       )}
 
       {/* Modal detalle + cambio de estado */}

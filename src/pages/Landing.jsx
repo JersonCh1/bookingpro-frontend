@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { LogoFull } from '../components/ui/Logo'
 import { CheckCircle, ArrowRight, Zap, Calendar, MessageCircle } from 'lucide-react'
@@ -12,29 +12,6 @@ const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
   duration: `${6 + (i % 5) * 1.4}s`,
   delay:    `${(i * 0.6) % 5}s`,
 }))
-
-/* ── CountUp ── */
-function CountUp({ target, suffix = '' }) {
-  const ref = useRef(null); const raf = useRef(null); const done = useRef(false)
-  useEffect(() => {
-    const el = ref.current; if (!el) return
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && !done.current) {
-        done.current = true
-        const t0 = performance.now()
-        const tick = (now) => {
-          const p = Math.min((now - t0) / 1800, 1)
-          el.textContent = Math.floor((1 - Math.pow(1 - p, 3)) * target) + suffix
-          if (p < 1) raf.current = requestAnimationFrame(tick)
-        }
-        raf.current = requestAnimationFrame(tick); obs.disconnect()
-      }
-    }, { threshold: 0.2 })
-    obs.observe(el)
-    return () => { obs.disconnect(); if (raf.current) cancelAnimationFrame(raf.current) }
-  }, [target, suffix])
-  return <span ref={ref}>0{suffix}</span>
-}
 
 /* ── Navbar ── */
 function Navbar() {
@@ -147,23 +124,55 @@ function Hero() {
 
 /* ── Stats Bar ── */
 function StatsBar() {
-  const stats = [
-    { value: <><CountUp target={500} suffix='+' /></>, label: 'negocios activos' },
-    { value: '24/7', label: 'disponible sin parar' },
-    { value: '0', label: 'llamadas para coordinar' },
-  ]
   return (
     <section style={{ backgroundColor: '#111' }}>
       <div className='max-w-4xl mx-auto px-5 sm:px-8 py-10 grid grid-cols-3 gap-6 text-center divide-x divide-gray-800'>
-        {stats.map(s => (
-          <div key={s.label}>
-            <p className='text-3xl sm:text-4xl font-black' style={{ color: '#C0392B' }}>{s.value}</p>
-            <p className='text-xs sm:text-sm text-gray-500 mt-1 font-medium'>{s.label}</p>
-          </div>
-        ))}
+        <div>
+          <p className='text-2xl sm:text-3xl font-black text-white mb-1'>Nuevo</p>
+          <span className='inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full'
+            style={{ backgroundColor: 'rgba(34,197,94,0.1)', color: '#4ade80' }}>
+            <span className='w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse' />
+            Arequipa, Perú
+          </span>
+        </div>
+        <div>
+          <p className='text-3xl sm:text-4xl font-black' style={{ color: '#C0392B' }}>24/7</p>
+          <p className='text-xs sm:text-sm text-gray-500 mt-1 font-medium'>disponible sin parar</p>
+        </div>
+        <div>
+          <p className='text-lg sm:text-xl font-black text-white'>Recién lanzado 🚀</p>
+          <p className='text-xs sm:text-sm text-gray-500 mt-1 font-medium'>únete desde el inicio</p>
+        </div>
       </div>
     </section>
   )
+}
+
+/* ── Scroll Reveal ── */
+function useScrollReveal(ref, delay = 0) {
+  useEffect(() => {
+    const el = ref.current; if (!el) return
+    el.style.opacity = '0'
+    el.style.transform = 'translateY(20px)'
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        setTimeout(() => {
+          el.style.transition = 'opacity 0.5s ease, transform 0.5s ease'
+          el.style.opacity = '1'
+          el.style.transform = 'translateY(0)'
+        }, delay)
+        obs.disconnect()
+      }
+    }, { threshold: 0.15 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [delay])
+}
+
+function AnimatedCard({ children, delay }) {
+  const ref = useRef(null)
+  useScrollReveal(ref, delay)
+  return <div ref={ref}>{children}</div>
 }
 
 /* ── Cómo funciona ── */
@@ -199,16 +208,18 @@ function HowItWorks() {
           <h2 className='text-3xl sm:text-4xl font-black text-gray-900'>Funciona en 3 pasos</h2>
         </div>
         <div className='grid sm:grid-cols-3 gap-6'>
-          {steps.map(s => (
-            <div key={s.n} className='relative p-6 rounded-2xl border border-gray-100 hover:border-red-100 transition-all hover:shadow-lg group'>
-              <div className='w-10 h-10 rounded-xl flex items-center justify-center text-lg font-black text-white mb-5 transition-all group-hover:scale-110'
-                style={{ backgroundColor: '#C0392B', boxShadow: '0 4px 12px rgba(192,57,43,0.3)' }}>
-                {s.n}
+          {steps.map((s, i) => (
+            <AnimatedCard key={s.n} delay={i * 150}>
+              <div className='relative p-6 rounded-2xl border border-gray-100 hover:border-red-100 transition-all hover:shadow-lg group h-full'>
+                <div className='w-10 h-10 rounded-xl flex items-center justify-center text-lg font-black text-white mb-5 transition-all group-hover:scale-110'
+                  style={{ backgroundColor: '#C0392B', boxShadow: '0 4px 12px rgba(192,57,43,0.3)' }}>
+                  {s.n}
+                </div>
+                <s.icon className='w-5 h-5 mb-3' style={{ color: '#C0392B' }} />
+                <h3 className='font-black text-gray-900 mb-2'>{s.title}</h3>
+                <p className='text-sm text-gray-400 leading-relaxed'>{s.desc}</p>
               </div>
-              <s.icon className='w-5 h-5 mb-3' style={{ color: '#C0392B' }} />
-              <h3 className='font-black text-gray-900 mb-2'>{s.title}</h3>
-              <p className='text-sm text-gray-400 leading-relaxed'>{s.desc}</p>
-            </div>
+            </AnimatedCard>
           ))}
         </div>
       </div>
@@ -234,21 +245,57 @@ function BusinessTypes() {
           <p className='text-gray-500 mt-3'>Si tienes clientes con citas, AgendaYa es para ti</p>
         </div>
         <div className='grid grid-cols-2 sm:grid-cols-3 gap-3'>
-          {types.map(t => (
-            <div key={t.label}
-              className='flex items-center gap-3 p-4 rounded-2xl transition-all cursor-default'
-              style={{ backgroundColor: '#111', border: '1px solid #1E1E1E' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#C0392B33'; e.currentTarget.style.backgroundColor = '#161616' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = '#1E1E1E'; e.currentTarget.style.backgroundColor = '#111' }}
-            >
-              <span className='text-2xl'>{t.icon}</span>
-              <span className='text-sm font-semibold text-gray-300'>{t.label}</span>
-            </div>
+          {types.map((t, i) => (
+            <AnimatedCard key={t.label} delay={i * 80}>
+              <div
+                className='flex items-center gap-3 p-4 rounded-2xl cursor-pointer'
+                style={{
+                  backgroundColor: '#111',
+                  border: '1px solid #1E1E1E',
+                  borderLeft: '3px solid transparent',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = '#C0392B33'
+                  e.currentTarget.style.borderLeftColor = '#C0392B'
+                  e.currentTarget.style.backgroundColor = '#161616'
+                  e.currentTarget.style.transform = 'translateX(4px)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = '#1E1E1E'
+                  e.currentTarget.style.borderLeftColor = 'transparent'
+                  e.currentTarget.style.backgroundColor = '#111'
+                  e.currentTarget.style.transform = 'translateX(0)'
+                }}
+              >
+                <span className='text-2xl'>{t.icon}</span>
+                <span className='text-sm font-semibold text-gray-300'>{t.label}</span>
+              </div>
+            </AnimatedCard>
           ))}
         </div>
       </div>
     </section>
   )
+}
+
+/* ── Countdown ── */
+function useCountdown(targetDate) {
+  const [timeLeft, setTimeLeft] = useState('')
+  useEffect(() => {
+    const calc = () => {
+      const diff = targetDate - Date.now()
+      if (diff <= 0) { setTimeLeft('Expirado'); return }
+      const d = Math.floor(diff / 86400000)
+      const h = Math.floor((diff % 86400000) / 3600000)
+      const m = Math.floor((diff % 3600000) / 60000)
+      setTimeLeft(`${d}d ${h}h ${m}m`)
+    }
+    calc()
+    const id = setInterval(calc, 60000)
+    return () => clearInterval(id)
+  }, [targetDate])
+  return timeLeft
 }
 
 /* ── Precio ── */
@@ -260,6 +307,9 @@ function Pricing() {
     'Panel de control completo',
     'Soporte en español',
   ]
+  const deadline = useMemo(() => Date.now() + 7 * 24 * 60 * 60 * 1000, [])
+  const countdown = useCountdown(deadline)
+
   return (
     <section className='py-20 sm:py-24' style={{ backgroundColor: '#111' }}>
       <div className='max-w-md mx-auto px-5 sm:px-8'>
@@ -293,9 +343,9 @@ function Pricing() {
             </div>
           </div>
 
-          {/* Tiempo limitado */}
-          <p className='text-xs mb-1' style={{ color: '#E74C3C' }}>
-            ⏰ Precio especial por tiempo limitado
+          {/* Tiempo limitado — countdown real */}
+          <p className='text-xs mb-1 font-mono' style={{ color: '#E74C3C' }}>
+            ⏰ Termina en: <span className='font-black'>{countdown}</span>
           </p>
           <p className='text-xs text-gray-600 mb-7'>Sin contrato · Cancela cuando quieras</p>
 
@@ -350,8 +400,22 @@ function FinalCTA() {
   )
 }
 
-/* ── Footer ── */
+/* ── Footer con redes sociales ── */
 function Footer() {
+  const socials = [
+    {
+      label: 'Instagram', href: '#',
+      icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+    },
+    {
+      label: 'Facebook', href: '#',
+      icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+    },
+    {
+      label: 'TikTok', href: '#',
+      icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+    },
+  ]
   return (
     <footer style={{ backgroundColor: '#0D0D0D', borderTop: '1px solid #1A1A1A' }}>
       <div className='max-w-5xl mx-auto px-5 sm:px-8 py-10'>
@@ -363,23 +427,31 @@ function Footer() {
               © {new Date().getFullYear()} AgendaYa · Arequipa, Perú
             </p>
           </div>
-          <div className='flex items-center gap-5'>
-            <Link to='/login'
-              className='text-sm font-medium transition-colors'
-              style={{ color: '#444' }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#888' }}
-              onMouseLeave={e => { e.currentTarget.style.color = '#444' }}
-            >
-              Iniciar sesión
-            </Link>
-            <Link to='/register'
-              className='text-sm font-medium transition-colors'
-              style={{ color: '#444' }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#888' }}
-              onMouseLeave={e => { e.currentTarget.style.color = '#444' }}
-            >
-              Crear cuenta
-            </Link>
+          <div className='flex flex-col items-center sm:items-end gap-4'>
+            <div className='flex items-center gap-4'>
+              {socials.map(s => (
+                <a key={s.label} href={s.href} aria-label={s.label}
+                  className='transition-colors'
+                  style={{ color: '#444' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#C0392B' }}
+                  onMouseLeave={e => { e.currentTarget.style.color = '#444' }}
+                >
+                  {s.icon}
+                </a>
+              ))}
+            </div>
+            <div className='flex items-center gap-5'>
+              <Link to='/login' className='text-sm font-medium transition-colors' style={{ color: '#444' }}
+                onMouseEnter={e => { e.currentTarget.style.color = '#888' }}
+                onMouseLeave={e => { e.currentTarget.style.color = '#444' }}>
+                Iniciar sesión
+              </Link>
+              <Link to='/register' className='text-sm font-medium transition-colors' style={{ color: '#444' }}
+                onMouseEnter={e => { e.currentTarget.style.color = '#888' }}
+                onMouseLeave={e => { e.currentTarget.style.color = '#444' }}>
+                Crear cuenta
+              </Link>
+            </div>
           </div>
         </div>
       </div>

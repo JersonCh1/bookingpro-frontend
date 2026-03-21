@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useParams, useLocation } from 'react-router-dom'
 import { useAuthStore } from './store/authStore'
 
 import Login    from './pages/auth/Login'
@@ -31,9 +31,12 @@ function PublicRoute({ children }) {
   return !token ? children : <Navigate to='/dashboard' replace />
 }
 
-export default function App() {
+function AppInner() {
+  const { token } = useAuthStore()
+  const location = useLocation()
+
   return (
-    <BrowserRouter>
+    <div key={location.pathname} style={{ animation: 'fade-slide-up 0.15s ease both' }}>
       <Routes>
         {/* Página pública de reservas (sin auth) — primero para evitar conflictos */}
         <Route path='/book/:slug' element={<BookingPage />} />
@@ -58,6 +61,14 @@ export default function App() {
         {/* 404 — catch-all */}
         <Route path='*' element={<NotFound />} />
       </Routes>
+    </div>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppInner />
     </BrowserRouter>
   )
 }

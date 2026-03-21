@@ -128,9 +128,12 @@ function StepService({ slug, onSelect }) {
               }}
             >
               <div className='flex items-center gap-3.5 min-w-0'>
-                <div className='w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors'
+                <div className='w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden'
                   style={{ backgroundColor: '#fde8e8' }}>
-                  <Scissors className='w-5 h-5' style={{ color: '#C0392B' }} />
+                  {s.image_url
+                    ? <img src={s.image_url} alt={s.name} className='w-full h-full object-cover rounded-xl' onError={e => { e.target.style.display = 'none' }} />
+                    : <Scissors className='w-5 h-5' style={{ color: '#C0392B' }} />
+                  }
                 </div>
                 <div className='min-w-0'>
                   <p className='font-bold text-gray-900 text-sm leading-tight'>{s.name}</p>
@@ -224,6 +227,7 @@ function StepDate({ slug, service, onSelect }) {
           onClick={() => setMonth(m => subMonths(m, 1))}
           disabled={isBefore(subMonths(month, 1), startOfMonth(today))}
           className='w-9 h-9 rounded-xl flex items-center justify-center hover:bg-gray-100 disabled:opacity-30 transition-colors'
+          aria-label='Mes anterior'
         >
           <ChevronLeft className='w-5 h-5 text-gray-600' />
         </button>
@@ -233,6 +237,7 @@ function StepDate({ slug, service, onSelect }) {
         <button
           onClick={() => setMonth(m => addMonths(m, 1))}
           className='w-9 h-9 rounded-xl flex items-center justify-center hover:bg-gray-100 transition-colors'
+          aria-label='Mes siguiente'
         >
           <ChevronRight className='w-5 h-5 text-gray-600' />
         </button>
@@ -323,9 +328,21 @@ function StepTime({ slug, service, date, onSelect }) {
     }).then(r => r.data?.data ?? r.data),
   })
 
-  const slots     = data?.slots ?? (Array.isArray(data) ? data : [])
-  const available = slots.filter(s => s.available)
-  const busy      = slots.filter(s => !s.available)
+  const slots = data?.slots ?? (Array.isArray(data) ? data : [])
+
+  const available = useMemo(() => {
+    const allAvailable = slots.filter(s => s.available)
+    const today = new Date().toISOString().slice(0, 10)
+    if (date !== today) return allAvailable
+    const now = new Date()
+    const currentMinutes = now.getHours() * 60 + now.getMinutes()
+    return allAvailable.filter(s => {
+      const [h, m] = s.time.split(':').map(Number)
+      return h * 60 + m > currentMinutes
+    })
+  }, [slots, date])
+
+  const busy = slots.filter(s => !s.available)
 
   return (
     <div>
@@ -378,23 +395,22 @@ function StepTime({ slug, service, date, onSelect }) {
           </p>
           <div className='grid grid-cols-3 sm:grid-cols-4 gap-2'>
             {available.map(slot => (
-              <button
-                key={slot.time}
-                onClick={() => onSelect(slot.time)}
-                className='py-3 rounded-xl text-sm font-bold border-2 transition-all'
+              <button key={slot.time} onClick={() => onSelect(slot.time)}
+                className='py-3 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-0.5'
                 style={{ borderColor: '#C0392B', color: '#C0392B', backgroundColor: 'white' }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.backgroundColor = '#C0392B'
-                  e.currentTarget.style.color = 'white'
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(192,57,43,0.25)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.backgroundColor = 'white'
-                  e.currentTarget.style.color = '#C0392B'
-                  e.currentTarget.style.boxShadow = 'none'
-                }}
+                onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#C0392B'; e.currentTarget.style.color = 'white'; e.currentTarget.style.transform = 'scale(1.02)' }}
+                onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'white'; e.currentTarget.style.color = '#C0392B'; e.currentTarget.style.transform = 'scale(1)' }}
               >
-                {slot.time}
+                {(() => {
+                  const [h, m] = slot.time.split(':')
+                  const hour = parseInt(h)
+                  const ampm = hour < 12 ? 'AM' : 'PM'
+                  const h12  = hour % 12 || 12
+                  return <>
+                    <span className='text-sm font-black'>{h12}:{m}</span>
+                    <span className='text-[10px] font-bold opacity-70'>{ampm}</span>
+                  </>
+                })()}
               </button>
             ))}
           </div>
@@ -421,7 +437,7 @@ function StepTime({ slug, service, date, onSelect }) {
 // ── Paso 4: Datos del cliente ──────────────────────────────────────────────
 const clientSchema = z.object({
   customer_name:  z.string().min(2, 'Nombre requerido'),
-  customer_phone: z.string().min(7, 'Teléfono / WhatsApp requerido'),
+  customer_phone: z.string().regex(/^(\+51)?9\d{8}$/, 'Ingresa tu número de WhatsApp (ej: 987654321)'),
   notes:          z.string().optional(),
 })
 
@@ -537,7 +553,13 @@ function StepSuccess({ booking, service, tenant }) {
   const items = [
     { icon: Scissors, label: 'Servicio',  value: service.name },
     { icon: Calendar, label: 'Fecha',
-      value: format(new Date(booking.date + 'T12:00'), "EEEE d 'de' MMMM yyyy", { locale: es }) },
+      value: (() => {
+        try {
+          const d = new Date(booking.date + 'T12:00')
+          return new Intl.DateTimeFormat('es-PE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(d)
+        } catch { return booking.date }
+      })()
+    },
     { icon: Clock, label: 'Hora',
       value: `${formatTime(booking.start_time)}${booking.end_time ? ` — ${formatTime(booking.end_time)}` : ''}` },
     ...(tenant.address ? [{ icon: MapPin, label: 'Dirección', value: tenant.address }] : []),
@@ -579,7 +601,7 @@ function StepSuccess({ booking, service, tenant }) {
       </div>
 
       {/* WhatsApp banner */}
-      <div className='rounded-2xl p-4 space-y-2'
+      <div className='rounded-2xl p-4 space-y-2 mb-3'
         style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}>
         <div className='flex items-center gap-3'>
           <div className='w-8 h-8 rounded-xl bg-green-500 flex items-center justify-center flex-shrink-0 text-white text-sm font-black'>
@@ -594,6 +616,25 @@ function StepSuccess({ booking, service, tenant }) {
           ✓ El negocio también fue notificado por WhatsApp
         </p>
       </div>
+
+      {/* Google Calendar */}
+      {(() => {
+        try {
+          const startDt = booking.date.replace(/-/g, '') + 'T' + (booking.start_time || '').replace(/:/g, '').slice(0,4) + '00'
+          const endDt   = booking.date.replace(/-/g, '') + 'T' + (booking.end_time   || '').replace(/:/g, '').slice(0,4) + '00'
+          const gcUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(service.name + ' — ' + tenant.name)}&dates=${startDt}/${endDt}&details=${encodeURIComponent('Reservado con AgendaYa')}&location=${encodeURIComponent(tenant.address || tenant.city || '')}`
+          return (
+            <a href={gcUrl} target='_blank' rel='noopener noreferrer'
+              className='mt-3 flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold transition-all'
+              style={{ border: '1.5px solid #e5e7eb', color: '#374151', backgroundColor: 'white' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#C0392B'; e.currentTarget.style.color = '#C0392B' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.color = '#374151' }}
+            >
+              📅 Agregar a Google Calendar
+            </a>
+          )
+        } catch { return null }
+      })()}
     </div>
   )
 }
@@ -622,10 +663,25 @@ export default function BookingPage() {
   }
 
   if (loadingTenant) return (
-    <div className='min-h-screen flex items-center justify-center' style={{ backgroundColor: '#0D0D0D' }}>
-      <div className='text-center'>
-        <Loader2 className='w-8 h-8 animate-spin mx-auto mb-3' style={{ color: '#C0392B' }} />
-        <p className='text-gray-500 text-sm'>Cargando...</p>
+    <div className='min-h-screen flex flex-col' style={{ backgroundColor: '#F5F5F7' }}>
+      <div style={{ backgroundColor: '#0D0D0D' }} className='relative overflow-hidden'>
+        <div className='max-w-lg mx-auto px-5 py-8'>
+          {/* Skeleton hero */}
+          <div className='flex items-center gap-4 mb-6'>
+            <div className='w-14 h-14 rounded-2xl skeleton-shimmer flex-shrink-0' style={{ backgroundColor: '#1a1a1a' }} />
+            <div className='flex-1 space-y-2'>
+              <div className='h-5 rounded skeleton-shimmer w-40' style={{ backgroundColor: '#1a1a1a' }} />
+              <div className='h-3 rounded skeleton-shimmer w-28' style={{ backgroundColor: '#1a1a1a' }} />
+            </div>
+          </div>
+          <div className='h-7 rounded skeleton-shimmer w-56 mb-2' style={{ backgroundColor: '#1a1a1a' }} />
+          <div className='h-4 rounded skeleton-shimmer w-36' style={{ backgroundColor: '#1a1a1a' }} />
+        </div>
+      </div>
+      <div className='flex-1 max-w-lg mx-auto w-full px-5 py-6 space-y-3'>
+        {[1,2,3].map(i => (
+          <div key={i} className='h-20 rounded-2xl skeleton-shimmer' />
+        ))}
       </div>
     </div>
   )
@@ -694,11 +750,9 @@ export default function BookingPage() {
             </div>
           </div>
 
-          {tenant.description && (
-            <p className='text-sm mb-4 leading-relaxed' style={{ color: '#888' }}>
-              {tenant.description}
-            </p>
-          )}
+          <p className='text-sm mb-4 leading-relaxed' style={{ color: tenant.description ? '#888' : '#444' }}>
+            {tenant.description || 'Reserva tu cita fácil y rápido'}
+          </p>
           <p className='text-2xl font-black text-white leading-tight mb-1'>
             Reserva tu cita <span style={{ color: '#C0392B' }}>en línea</span>
           </p>
