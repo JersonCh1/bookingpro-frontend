@@ -146,7 +146,7 @@ export default function DashboardLayout() {
           >
             <Menu className='w-5 h-5 text-gray-700' />
           </button>
-          <LogoFull height={70} />
+          <LogoFull height={32} />
         </header>
 
         <main className='flex-1 p-6'>

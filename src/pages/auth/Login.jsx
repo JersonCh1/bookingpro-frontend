@@ -98,7 +98,7 @@ export default function Login() {
 
         {/* ── Logo ── */}
         <div className='relative z-10 mb-8'>
-          <LogoFull height={180} dark />
+          <LogoFull height={52} dark />
         </div>
 
         {/* ── Copy central — fluye naturalmente sin justify-between ── */}
@@ -178,7 +178,7 @@ export default function Login() {
 
           {/* Logo móvil */}
           <div className='lg:hidden mb-8 flex justify-center'>
-            <LogoFull height={140} />
+            <LogoFull height={44} />
           </div>
 
           <p className='text-[10px] font-bold uppercase tracking-widest mb-1.5' style={{ color: '#C0392B' }}>
