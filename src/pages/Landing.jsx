@@ -56,19 +56,22 @@ function Navbar() {
 /* ── Hero ── */
 function Hero() {
   return (
-    <section className='relative overflow-hidden pt-24 pb-20 sm:pt-32 sm:pb-28' style={{ backgroundColor: '#0D0D0D' }}>
+    <section className='relative overflow-hidden pt-24 pb-20 sm:pt-32 sm:pb-28' style={{ backgroundColor: '#111115' }}>
       {/* Grid */}
       <div className='absolute inset-0 pointer-events-none' style={{
-        backgroundImage: `linear-gradient(rgba(192,57,43,0.05) 1px,transparent 1px),
-          linear-gradient(90deg,rgba(192,57,43,0.05) 1px,transparent 1px)`,
+        backgroundImage: `linear-gradient(rgba(192,57,43,0.10) 1px,transparent 1px),
+          linear-gradient(90deg,rgba(192,57,43,0.10) 1px,transparent 1px)`,
         backgroundSize: '40px 40px',
       }} />
       {/* Glows */}
       <div className='glow-breathe absolute inset-0 pointer-events-none' style={{
-        background: 'radial-gradient(ellipse at 50% 40%, rgba(192,57,43,0.18) 0%, transparent 55%)',
+        background: 'radial-gradient(ellipse at 50% 40%, rgba(192,57,43,0.30) 0%, transparent 60%)',
       }} />
       <div className='absolute inset-0 pointer-events-none' style={{
-        background: 'radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(0,0,0,0.6) 100%)',
+        background: 'radial-gradient(ellipse at 80% 10%, rgba(192,57,43,0.12) 0%, transparent 40%)',
+      }} />
+      <div className='absolute inset-0 pointer-events-none' style={{
+        background: 'radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(0,0,0,0.3) 100%)',
       }} />
       {/* Particles */}
       {PARTICLES.map(p => (
