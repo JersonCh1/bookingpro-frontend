@@ -30,7 +30,6 @@ const BUSINESS_TYPES = [
   { value: 'otro',        label: 'Otro tipo de negocio' },
 ]
 
-/* ── Partículas flotantes — mismas que Login ── */
 const PARTICLES = Array.from({ length: 20 }, (_, i) => ({
   id:       i,
   left:     `${(i * 5.3 + 7) % 94}%`,
@@ -54,7 +53,6 @@ const INDUSTRIES = [
   { icon: '🐾', label: 'Veterinarias' },
 ]
 
-/* ── Counter-up (igual que Login) ── */
 function CountUp({ target, suffix = '' }) {
   const ref  = useRef(null)
   const raf  = useRef(null)
@@ -78,10 +76,7 @@ function CountUp({ target, suffix = '' }) {
       }
     }, { threshold: 0.3 })
     observer.observe(el)
-    return () => {
-      observer.disconnect()
-      if (raf.current) cancelAnimationFrame(raf.current)
-    }
+    return () => { observer.disconnect(); if (raf.current) cancelAnimationFrame(raf.current) }
   }, [target, suffix])
 
   return <span ref={ref}>0{suffix}</span>
@@ -98,47 +93,39 @@ export default function Register() {
   return (
     <div className='min-h-screen flex' style={{ backgroundColor: '#0D0D0D' }}>
 
-      {/* ══════════════════════════════════════
-          LEFT PANEL — 45% dark con todos los efectos
-      ══════════════════════════════════════ */}
+      {/* ════════════════════════════════════
+          PANEL IZQUIERDO — 45%
+      ════════════════════════════════════ */}
       <div className='hidden lg:flex lg:w-[45%] flex-col justify-between p-14 relative overflow-hidden'>
 
-        {/* Grid pattern */}
+        {/* Grid */}
         <div className='absolute inset-0 pointer-events-none' style={{
           backgroundImage: `
             linear-gradient(rgba(192,57,43,0.07) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(192,57,43,0.07) 1px, transparent 1px)
-          `,
+            linear-gradient(90deg, rgba(192,57,43,0.07) 1px, transparent 1px)`,
           backgroundSize: '40px 40px',
         }} />
 
-        {/* Radial glow blob */}
+        {/* Blob */}
         <div className='absolute inset-0 pointer-events-none' style={{
-          background: 'radial-gradient(ellipse at 25% 55%, rgba(192,57,43,0.1) 0%, transparent 65%)',
+          background: 'radial-gradient(ellipse at 25% 55%, rgba(192,57,43,0.09) 0%, transparent 65%)',
         }} />
 
-        {/* Partículas flotantes */}
+        {/* Partículas */}
         {PARTICLES.map(p => (
-          <span
-            key={p.id}
-            className='particle'
-            style={{
-              width:             p.size,
-              height:            p.size,
-              left:              p.left,
-              top:               p.top,
-              animationDuration: p.duration,
-              animationDelay:    p.delay,
-            }}
-          />
+          <span key={p.id} className='particle' style={{
+            width: p.size, height: p.size,
+            left: p.left, top: p.top,
+            animationDuration: p.duration, animationDelay: p.delay,
+          }} />
         ))}
 
-        {/* Logo */}
+        {/* Logo — cápsula blanca visible sobre negro */}
         <div className='relative z-10'>
-          <LogoFull height={40} variant='light' />
+          <LogoFull height={44} dark />
         </div>
 
-        {/* Copy central */}
+        {/* Copy */}
         <div className='relative z-10'>
           <div className='grow-line h-0.5 mb-8' style={{ backgroundColor: '#C0392B' }} />
 
@@ -146,31 +133,24 @@ export default function Register() {
             Únete a los mejores<br />negocios del Perú.
           </h1>
 
-          {/* Typing subtitle — exactamente 26 chars */}
           <div className='overflow-hidden mb-10'>
             <p className='typing-text text-sm font-semibold' style={{ color: '#C0392B' }}>
               2 minutos y listo. Gratis.
             </p>
           </div>
 
-          {/* Stats con counter-up */}
+          {/* Stats */}
           <div className='flex gap-8 mb-10'>
-            <div>
-              <p className='text-3xl font-black' style={{ color: '#C0392B' }}>
-                <CountUp target={500} suffix='+' />
-              </p>
-              <p className='text-xs text-gray-500 mt-1 font-medium'>negocios activos</p>
-            </div>
-            <div>
-              <p className='text-3xl font-black' style={{ color: '#C0392B' }}>
-                <CountUp target={2} suffix=' min' />
-              </p>
-              <p className='text-xs text-gray-500 mt-1 font-medium'>para configurar</p>
-            </div>
-            <div>
-              <p className='text-3xl font-black' style={{ color: '#C0392B' }}>24/7</p>
-              <p className='text-xs text-gray-500 mt-1 font-medium'>reservas online</p>
-            </div>
+            {[
+              { label: 'negocios activos', el: <CountUp target={500} suffix='+' /> },
+              { label: 'para configurar',  el: <CountUp target={2} suffix=' min' /> },
+              { label: 'reservas online',  el: <span>24/7</span> },
+            ].map(({ label, el }) => (
+              <div key={label}>
+                <p className='text-3xl font-black' style={{ color: '#C0392B' }}>{el}</p>
+                <p className='text-xs text-gray-500 mt-1 font-medium'>{label}</p>
+              </div>
+            ))}
           </div>
 
           {/* Benefits */}
@@ -183,79 +163,69 @@ export default function Register() {
             ))}
           </ul>
 
-          {/* Industry chips */}
+          {/* Chips */}
           <div className='flex flex-wrap gap-2'>
             {INDUSTRIES.map(({ icon, label }) => (
               <span
                 key={label}
                 className='inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full transition-colors cursor-default'
-                style={{ backgroundColor: '#141414', color: '#6b7280', border: '1px solid #1f1f1f' }}
+                style={{ backgroundColor: '#141414', color: '#6b7280', border: '1px solid #222' }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = '#C0392B'; e.currentTarget.style.color = '#E74C3C' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#1f1f1f'; e.currentTarget.style.color = '#6b7280' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#222'; e.currentTarget.style.color = '#6b7280' }}
               >
-                <span>{icon}</span> {label}
+                {icon} {label}
               </span>
             ))}
           </div>
         </div>
 
         {/* Precio + footer */}
-        <div className='relative z-10'>
-          {/* Precio */}
-          <div
-            className='p-4 rounded-2xl mb-5'
-            style={{ backgroundColor: '#111', border: '1px solid #1A1A1A' }}
-          >
+        <div className='relative z-10 space-y-4'>
+          <div className='p-4 rounded-2xl' style={{ backgroundColor: '#111', border: '1px solid #1A1A1A' }}>
             <p className='text-[10px] font-bold uppercase tracking-widest mb-1' style={{ color: '#4A4A4A' }}>
-              Precio único en Perú
+              Precio único
             </p>
             <div className='flex items-baseline gap-1.5'>
               <span className='text-2xl font-black text-white'>S/. 80</span>
               <span className='text-sm text-gray-600'>/ mes</span>
             </div>
-            <p className='text-xs mt-1' style={{ color: '#4A4A4A' }}>
-              Sin contrato · Cancela cuando quieras
-            </p>
+            <p className='text-xs mt-1' style={{ color: '#4A4A4A' }}>Sin contrato · Cancela cuando quieras</p>
           </div>
-
-          {/* Testimonial */}
-          <blockquote
-            className='pl-4 text-xs text-gray-600 italic leading-relaxed mb-4'
-            style={{ borderLeft: '2px solid #C0392B' }}
-          >
-            "Pasé de perder clientes por teléfono a tener el calendario lleno automáticamente."
+          <blockquote className='pl-4 text-xs text-gray-600 italic leading-relaxed'
+            style={{ borderLeft: '2px solid #C0392B' }}>
+            "Pasé de perder clientes a tener el calendario lleno automáticamente."
           </blockquote>
-
-          <p className='text-xs' style={{ color: '#2C2C2C' }}>
-            © {new Date().getFullYear()} AgendaYa · Hecho en Perú
-          </p>
+          <p className='text-xs' style={{ color: '#2C2C2C' }}>© {new Date().getFullYear()} AgendaYa · Hecho en Perú</p>
         </div>
       </div>
 
-      {/* ══════════════════════════════════════
-          RIGHT PANEL — 55% cream, formulario
-      ══════════════════════════════════════ */}
+      {/* ════════════════════════════════════
+          PANEL DERECHO — 55%
+      ════════════════════════════════════ */}
       <div
         className='w-full lg:w-[55%] flex flex-col overflow-y-auto relative'
         style={{ backgroundColor: '#F5F0EB' }}
       >
-        {/* Decoración corner */}
+        {/* Decoración esquina */}
         <div className='absolute top-0 right-0 w-56 h-56 pointer-events-none' style={{
-          background: 'radial-gradient(circle at top right, rgba(192,57,43,0.09), transparent 70%)',
+          background: 'radial-gradient(circle at top right, rgba(192,57,43,0.08), transparent 70%)',
         }} />
 
-        {/* ── TOP BAR — siempre visible, sticky ── */}
+        {/* ── TOP BAR: logo móvil + UN SOLO link de login ── */}
         <div
-          className='sticky top-0 z-20 flex items-center justify-between px-8 py-3'
-          style={{ backgroundColor: 'rgba(245,240,235,0.92)', backdropFilter: 'blur(8px)', borderBottom: '1px solid rgba(0,0,0,0.06)' }}
+          className='sticky top-0 z-20 flex items-center justify-between px-8 py-3.5'
+          style={{
+            backgroundColor: 'rgba(245,240,235,0.9)',
+            backdropFilter: 'blur(10px)',
+            borderBottom: '1px solid rgba(0,0,0,0.06)',
+          }}
         >
-          {/* Logo móvil */}
           <div className='lg:hidden'>
-            <LogoFull height={28} />
+            <LogoFull height={32} />
           </div>
           <div className='hidden lg:block' />
 
-          {/* CTA iniciar sesión — SIEMPRE VISIBLE */}
+          {/* ÚNICO link de inicio de sesión — siempre visible */}
           <div className='flex items-center gap-3'>
             <span className='text-sm text-gray-400 hidden sm:block'>¿Ya tienes cuenta?</span>
             <Link
@@ -270,7 +240,7 @@ export default function Register() {
           </div>
         </div>
 
-        {/* ── Contenido del formulario ── */}
+        {/* ── Formulario ── */}
         <div className='flex-1 flex items-start justify-center px-8 py-8'>
           <div className='w-full max-w-lg relative z-10'>
 
@@ -290,7 +260,6 @@ export default function Register() {
               </p>
             </div>
 
-            {/* Error global */}
             {errorMessage && (
               <div className='mb-5 p-3.5 rounded-xl flex items-start gap-3 bg-red-50 border border-red-100'>
                 <span className='text-red-400 mt-0.5 text-sm'>⚠</span>
@@ -298,152 +267,74 @@ export default function Register() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit((data) => mutate(data))} className='space-y-5'>
+            <form onSubmit={handleSubmit(d => mutate(d))} className='space-y-4'>
 
-              {/* ─── Sección 1: Negocio ─── */}
-              <div
-                className='rounded-2xl p-5 space-y-4'
-                style={{ backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.07)' }}
-              >
-                <div className='flex items-center gap-2 mb-1'>
-                  <div
-                    className='w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white flex-shrink-0'
-                    style={{ backgroundColor: '#C0392B' }}
-                  >
-                    1
-                  </div>
-                  <p className='text-xs font-bold text-gray-500 uppercase tracking-wider'>
-                    Tu negocio
-                  </p>
+              {/* Sección 1 */}
+              <div className='rounded-2xl p-5 space-y-4'
+                style={{ backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.07)' }}>
+                <div className='flex items-center gap-2'>
+                  <div className='w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white flex-shrink-0'
+                    style={{ backgroundColor: '#C0392B' }}>1</div>
+                  <p className='text-xs font-bold text-gray-400 uppercase tracking-wider'>Tu negocio</p>
                 </div>
 
-                <Input
-                  label='Nombre del negocio'
-                  placeholder='Ej: Barbería El Corte Fino'
-                  error={errors.name?.message}
-                  {...register('name')}
-                />
+                <Input label='Nombre del negocio' placeholder='Ej: Barbería El Corte Fino'
+                  error={errors.name?.message} {...register('name')} />
 
                 <div className='grid grid-cols-2 gap-3'>
-                  <Select
-                    label='Tipo de negocio'
-                    error={errors.business_type?.message}
-                    {...register('business_type')}
-                  >
+                  <Select label='Tipo de negocio' error={errors.business_type?.message} {...register('business_type')}>
                     <option value=''>Seleccionar...</option>
-                    {BUSINESS_TYPES.map(t => (
-                      <option key={t.value} value={t.value}>{t.label}</option>
-                    ))}
+                    {BUSINESS_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                   </Select>
-                  <Input
-                    label='Ciudad'
-                    placeholder='Arequipa'
-                    {...register('city')}
-                  />
+                  <Input label='Ciudad' placeholder='Arequipa' {...register('city')} />
                 </div>
 
-                <Input
-                  label='Teléfono / WhatsApp del negocio'
-                  placeholder='+51 987 654 321'
-                  type='tel'
-                  error={errors.phone?.message}
-                  {...register('phone')}
-                />
+                <Input label='Teléfono / WhatsApp' placeholder='+51 987 654 321'
+                  type='tel' error={errors.phone?.message} {...register('phone')} />
               </div>
 
-              {/* ─── Sección 2: Cuenta ─── */}
-              <div
-                className='rounded-2xl p-5 space-y-4'
-                style={{ backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.07)' }}
-              >
-                <div className='flex items-center gap-2 mb-1'>
-                  <div
-                    className='w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white flex-shrink-0'
-                    style={{ backgroundColor: '#C0392B' }}
-                  >
-                    2
-                  </div>
-                  <p className='text-xs font-bold text-gray-500 uppercase tracking-wider'>
-                    Tu acceso
-                  </p>
+              {/* Sección 2 */}
+              <div className='rounded-2xl p-5 space-y-4'
+                style={{ backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.07)' }}>
+                <div className='flex items-center gap-2'>
+                  <div className='w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black text-white flex-shrink-0'
+                    style={{ backgroundColor: '#C0392B' }}>2</div>
+                  <p className='text-xs font-bold text-gray-400 uppercase tracking-wider'>Tu acceso</p>
                 </div>
 
                 <div className='grid grid-cols-2 gap-3'>
-                  <Input
-                    label='Nombre'
-                    placeholder='Juan'
-                    error={errors.first_name?.message}
-                    {...register('first_name')}
-                  />
-                  <Input
-                    label='Apellido'
-                    placeholder='Pérez'
-                    error={errors.last_name?.message}
-                    {...register('last_name')}
-                  />
+                  <Input label='Nombre' placeholder='Juan'
+                    error={errors.first_name?.message} {...register('first_name')} />
+                  <Input label='Apellido' placeholder='Pérez'
+                    error={errors.last_name?.message} {...register('last_name')} />
                 </div>
 
-                <Input
-                  label='Correo electrónico'
-                  type='email'
-                  placeholder='tu@negocio.com'
-                  autoComplete='email'
-                  error={errors.email?.message}
-                  {...register('email')}
-                />
+                <Input label='Correo electrónico' type='email' placeholder='tu@negocio.com'
+                  autoComplete='email' error={errors.email?.message} {...register('email')} />
 
-                <Input
-                  label='Contraseña'
-                  type='password'
-                  placeholder='Mínimo 8 caracteres'
-                  autoComplete='new-password'
-                  error={errors.password?.message}
-                  {...register('password')}
-                />
+                <Input label='Contraseña' type='password' placeholder='Mínimo 8 caracteres'
+                  autoComplete='new-password' error={errors.password?.message} {...register('password')} />
               </div>
 
-              {/* ─── Submit ─── */}
               <button
                 type='submit'
                 disabled={isPending}
                 className='shimmer-btn w-full py-4 rounded-xl text-sm font-black text-white transition-all disabled:opacity-60 flex items-center justify-center gap-2'
-                style={{ backgroundColor: '#C0392B', letterSpacing: '0.01em' }}
+                style={{ backgroundColor: '#C0392B' }}
                 onMouseEnter={e => !isPending && (e.currentTarget.style.backgroundColor = '#A93226')}
                 onMouseLeave={e => !isPending && (e.currentTarget.style.backgroundColor = '#C0392B')}
               >
                 {isPending
-                  ? <><Loader2 className='w-4 h-4 animate-spin' /> Creando tu cuenta...</>
+                  ? <><Loader2 className='w-4 h-4 animate-spin' />Creando tu cuenta...</>
                   : <>Crear cuenta gratis <ArrowRight className='w-4 h-4' /></>
                 }
               </button>
 
-              <p className='text-[11px] text-center text-gray-400 leading-relaxed'>
+              <p className='text-[11px] text-center text-gray-400'>
                 Al registrarte aceptas los{' '}
-                <span className='underline cursor-pointer hover:text-primary-600 transition-colors' style={{ color: '#C0392B' }}>
-                  términos de servicio
-                </span>{' '}
-                y la política de privacidad.
+                <span className='underline cursor-pointer' style={{ color: '#C0392B' }}>términos de servicio</span>.
               </p>
             </form>
-
-            {/* Footer link (refuerzo) */}
-            <div
-              className='mt-5 pt-4 text-center'
-              style={{ borderTop: '1px solid rgba(0,0,0,0.07)' }}
-            >
-              <p className='text-sm text-gray-400'>
-                ¿Ya tienes cuenta?{' '}
-                <Link
-                  to='/login'
-                  className='font-bold transition-colors'
-                  style={{ color: '#C0392B' }}
-                  onMouseEnter={e => { e.currentTarget.style.color = '#922B21' }}
-                  onMouseLeave={e => { e.currentTarget.style.color = '#C0392B' }}
-                >
-                  Inicia sesión aquí →
-                </Link>
-              </p>
-            </div>
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@ import {
 import { useState } from 'react'
 import { useAuthStore } from '../../store/authStore'
 import { useLogout } from '../../hooks/useAuth'
-import { SidebarLogo } from '../ui/Logo'
+import { SidebarLogo, LogoFull } from '../ui/Logo'
 
 const NAV_ITEMS = [
   { to: '/dashboard',            label: 'Resumen',   icon: LayoutDashboard, end: true },
@@ -146,10 +146,7 @@ export default function DashboardLayout() {
           >
             <Menu className='w-5 h-5 text-gray-700' />
           </button>
-          <div className='flex items-center gap-2'>
-            <span className='font-black text-gray-900 text-base'>AgendaYa</span>
-            <span className='pulse-dot text-xs' style={{ color: '#C0392B' }}>●</span>
-          </div>
+          <LogoFull height={28} />
         </header>
 
         <main className='flex-1 p-6'>
