@@ -14,8 +14,8 @@ function LogoCrop({ height }) {
   // Left muy conservador (0%) para nunca cortar el borde izquierdo del ícono
   const full = height / 0.30   // contenido ocupa ~30% del alto del canvas
   const cTop = full * 0.37     // espacio transparente arriba
-  const cLft = 0               // sin recorte izquierdo — evita cortar el ícono
-  const cWid = full * 0.82     // ancho visible: contenido + margen derecho recortado
+  const cLft = 0               // sin recorte izquierdo
+  const cWid = full * 0.91     // ancho visible: muestra todo el contenido (texto "Agendaya" llega al 89%)
 
   return (
     <div style={{ width: cWid, height, overflow: 'hidden', position: 'relative', flexShrink: 0 }}>
@@ -46,7 +46,7 @@ export function LogoFull({ height = 44, dark = false, className = '' }) {
 export function SidebarLogo() {
   return (
     <div style={{ display: 'inline-flex', filter: 'invert(1) hue-rotate(180deg)' }}>
-      <LogoCrop height={30} />
+      <LogoCrop height={48} />
     </div>
   )
 }

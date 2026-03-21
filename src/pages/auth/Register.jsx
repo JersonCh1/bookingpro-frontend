@@ -118,7 +118,7 @@ export default function Register() {
         <div className='relative z-10 flex-1 flex flex-col justify-center'>
           <div className='grow-line h-px mb-8' style={{ backgroundColor: '#C0392B' }} />
 
-          <h1 className='text-3xl xl:text-4xl font-black text-white leading-[1.1] mb-4 tracking-tight'>
+          <h1 className='text-2xl xl:text-3xl font-black text-white leading-[1.1] mb-4 tracking-tight'>
             Únete a los mejores<br />negocios del Perú.
           </h1>
 
@@ -137,7 +137,7 @@ export default function Register() {
             ].map(({ el, label }) => (
               <div key={label}>
                 <p className='text-2xl font-black' style={{ color: '#C0392B' }}>{el}</p>
-                <p className='text-xs text-gray-500 mt-1 font-medium'>{label}</p>
+                <p className='text-xs text-gray-400 mt-1 font-medium'>{label}</p>
               </div>
             ))}
           </div>
@@ -157,27 +157,27 @@ export default function Register() {
             {CHIPS.map(c => (
               <span key={c}
                 className='text-xs font-semibold px-3 py-1.5 rounded-full cursor-default transition-all'
-                style={{ backgroundColor: '#111', color: '#555', border: '1px solid #222' }}
+                style={{ backgroundColor: '#111', color: '#888', border: '1px solid #2A2A2A' }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = '#C0392B'; e.currentTarget.style.color = '#E74C3C' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#222'; e.currentTarget.style.color = '#555' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#2A2A2A'; e.currentTarget.style.color = '#888' }}
               >{c}</span>
             ))}
           </div>
 
           {/* Precio */}
-          <div className='rounded-2xl p-5' style={{ backgroundColor: '#0F0F0F', border: '1px solid #1E1E1E' }}>
-            <p className='text-[10px] font-bold uppercase tracking-widest mb-1.5' style={{ color: '#3A3A3A' }}>
-              Precio único en Perú
+          <div className='rounded-2xl p-5' style={{ backgroundColor: '#111', border: '1px solid #C0392B22' }}>
+            <p className='text-[10px] font-bold uppercase tracking-widest mb-2' style={{ color: '#C0392B' }}>
+              ✦ Precio único en Perú
             </p>
-            <div className='flex items-baseline gap-2'>
-              <span className='text-2xl font-black text-white'>S/. 80</span>
-              <span className='text-sm' style={{ color: '#444' }}>/ mes</span>
+            <div className='flex items-baseline gap-2 mb-1'>
+              <span className='text-3xl font-black text-white'>S/. 50</span>
+              <span className='text-sm font-medium' style={{ color: '#777' }}>/&nbsp;mes</span>
             </div>
-            <p className='text-xs mt-1' style={{ color: '#3A3A3A' }}>Sin contrato · Cancela cuando quieras</p>
+            <p className='text-xs' style={{ color: '#666' }}>Sin contrato · Cancela cuando quieras</p>
           </div>
         </div>
 
-        <p className='relative z-10 text-xs' style={{ color: '#222' }}>
+        <p className='relative z-10 text-xs' style={{ color: '#555' }}>
           © {new Date().getFullYear()} AgendaYa · Hecho en Perú 🇵🇪
         </p>
       </div>
@@ -206,7 +206,7 @@ export default function Register() {
         {/* ── Header: logo izquierda + botón derecha ── */}
         <header className='header-enter relative z-10 flex-shrink-0 flex items-center justify-between px-8 py-4'
           style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-          <LogoFull height={36} />
+          <LogoFull height={58} />
           <Link
             to='/login'
             className='inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-lg transition-all'
@@ -228,7 +228,7 @@ export default function Register() {
                 <span className='w-1.5 h-1.5 rounded-full bg-current animate-pulse' />
                 Registro gratuito
               </span>
-              <h2 className='text-xl font-black text-gray-900 tracking-tight'>
+              <h2 className='text-lg font-black text-gray-900 tracking-tight'>
                 Crea tu cuenta en 2 minutos
               </h2>
               <p className='text-xs text-gray-400 mt-1'>Sin tarjeta de crédito · Sin compromisos</p>

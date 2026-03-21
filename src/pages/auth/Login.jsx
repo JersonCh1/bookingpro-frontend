@@ -130,7 +130,7 @@ export default function Login() {
                 <p className='text-3xl font-black' style={{ color: '#C0392B' }}>
                   {s.target != null ? <CountUp target={s.target} suffix={s.suffix} /> : s.fixed}
                 </p>
-                <p className='text-xs text-gray-500 mt-1 font-medium'>{s.label}</p>
+                <p className='text-xs text-gray-400 mt-1 font-medium'>{s.label}</p>
               </div>
             ))}
           </div>
@@ -140,33 +140,33 @@ export default function Login() {
             {CHIPS.map(c => (
               <span key={c}
                 className='text-xs font-semibold px-3 py-1.5 rounded-full cursor-default transition-all'
-                style={{ backgroundColor: '#111', color: '#555', border: '1px solid #222' }}
+                style={{ backgroundColor: '#111', color: '#888', border: '1px solid #2A2A2A' }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = '#C0392B'; e.currentTarget.style.color = '#E74C3C' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#222'; e.currentTarget.style.color = '#555' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#2A2A2A'; e.currentTarget.style.color = '#888' }}
               >{c}</span>
             ))}
           </div>
 
           {/* Precio */}
-          <div className='rounded-2xl p-5 mb-8' style={{ backgroundColor: '#0F0F0F', border: '1px solid #1E1E1E' }}>
-            <p className='text-[10px] font-bold uppercase tracking-widest mb-1.5' style={{ color: '#3A3A3A' }}>
-              Precio único en Perú
+          <div className='rounded-2xl p-5 mb-8' style={{ backgroundColor: '#111', border: '1px solid #C0392B22' }}>
+            <p className='text-[10px] font-bold uppercase tracking-widest mb-2' style={{ color: '#C0392B' }}>
+              ✦ Precio único en Perú
             </p>
-            <div className='flex items-baseline gap-2'>
-              <span className='text-2xl font-black text-white'>S/. 80</span>
-              <span className='text-sm' style={{ color: '#444' }}>/ mes</span>
+            <div className='flex items-baseline gap-2 mb-1'>
+              <span className='text-3xl font-black text-white'>S/. 50</span>
+              <span className='text-sm font-medium' style={{ color: '#777' }}>/&nbsp;mes</span>
             </div>
-            <p className='text-xs mt-1' style={{ color: '#3A3A3A' }}>Sin contrato · Cancela cuando quieras</p>
+            <p className='text-xs' style={{ color: '#666' }}>Sin contrato · Cancela cuando quieras</p>
           </div>
 
           {/* Testimonial */}
-          <blockquote className='pl-4 text-xs italic leading-relaxed' style={{ color: '#4A4A4A', borderLeft: '2px solid #2A2A2A' }}>
+          <blockquote className='pl-4 text-xs italic leading-relaxed' style={{ color: '#777', borderLeft: '2px solid #3A3A3A' }}>
             "Antes perdíamos citas por no contestar. Ahora todo es automático."
-            <span className='block mt-1 not-italic' style={{ color: '#333' }}>— Cliente desde 2024 · Arequipa</span>
+            <span className='block mt-1 not-italic' style={{ color: '#555' }}>— Cliente desde 2024 · Arequipa</span>
           </blockquote>
         </div>
 
-        <p className='relative z-10 text-xs' style={{ color: '#222' }}>
+        <p className='relative z-10 text-xs' style={{ color: '#555' }}>
           © {new Date().getFullYear()} AgendaYa · Hecho en Perú 🇵🇪
         </p>
       </div>
@@ -195,7 +195,7 @@ export default function Login() {
         {/* ── Header: logo izquierda + botón derecha ── */}
         <header className='header-enter relative z-10 flex-shrink-0 flex items-center justify-between px-8 py-4'
           style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-          <LogoFull height={36} />
+          <LogoFull height={58} />
           <Link
             to='/register'
             className='inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-lg transition-all'
@@ -218,7 +218,7 @@ export default function Login() {
                 <span className='w-1.5 h-1.5 rounded-full bg-current animate-pulse' />
                 Panel de administración
               </span>
-              <h2 className='text-2xl font-black text-gray-900 tracking-tight leading-tight'>
+              <h2 className='text-xl font-black text-gray-900 tracking-tight leading-tight'>
                 Bienvenido de vuelta
               </h2>
               <p className='text-sm text-gray-400 mt-1'>Ingresa tus credenciales para continuar</p>
