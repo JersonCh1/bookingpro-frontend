@@ -21,12 +21,11 @@ export const useAuthStore = create(
        * Guarda el payload completo después de login o register.
        * @param {object} payload  { access, refresh, user, tenant }
        */
-      setAuth: ({ access, refresh, user, tenant }) => set({
-        token:        access,
-        refreshToken: refresh,
-        user,
-        tenant,
-      }),
+      setAuth: (payload) => {
+        if (!payload) return
+        const { access, refresh, user, tenant } = payload
+        set({ token: access, refreshToken: refresh, user, tenant })
+      },
 
       /**
        * Actualiza solo los tokens (después de refresh).
