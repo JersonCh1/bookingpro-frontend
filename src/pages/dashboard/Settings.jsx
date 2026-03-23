@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -8,7 +8,9 @@ import { useAuthStore } from '../../store/authStore'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import Select from '../../components/ui/Select'
-import { ExternalLink, Copy, Check } from 'lucide-react'
+import { ExternalLink, Copy, Check, Upload, X } from 'lucide-react'
+
+const MAX_SIZE_BYTES = 800 * 1024  // 800 KB
 
 const schema = z.object({
   name:          z.string().min(2, 'Mínimo 2 caracteres'),
@@ -18,7 +20,7 @@ const schema = z.object({
   address:       z.string().optional(),
   city:          z.string().optional(),
   description:   z.string().optional(),
-  logo:          z.string().url('Ingresa una URL válida').optional().or(z.literal('')),
+  logo:          z.string().optional(),
 })
 
 const TYPES = [
@@ -48,8 +50,10 @@ export default function Settings() {
   const { tenant, updateTenant } = useAuthStore()
   const [copied, setCopied] = useState(false)
   const [toast, setToast] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const fileRef = useRef(null)
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm({
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       name:          tenant?.name          || '',
@@ -64,6 +68,22 @@ export default function Settings() {
   })
 
   const logoValue = watch('logo')
+
+  function handleFileChange(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > MAX_SIZE_BYTES) {
+      setToast({ message: 'Imagen muy grande (máx. 800 KB). Comprime la foto primero.', type: 'error' })
+      return
+    }
+    setUploading(true)
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      setValue('logo', ev.target.result)
+      setUploading(false)
+    }
+    reader.readAsDataURL(file)
+  }
 
   const { mutate, isPending } = useMutation({
     mutationFn: (data) => authApi.updateTenant(data).then(r => r.data.data),
@@ -154,28 +174,70 @@ export default function Settings() {
             />
             <p className='text-xs text-gray-400'>Se mostrará en tu página pública de reservas</p>
           </div>
-          <div className='flex flex-col gap-1.5'>
-            <label className='text-sm font-medium text-gray-700'>Logo del negocio (URL)</label>
-            <div className='flex gap-3 items-start'>
-              <div className='flex-1'>
+          {/* Logo del negocio */}
+          <div className='flex flex-col gap-2'>
+            <label className='text-sm font-medium text-gray-700'>Foto / Logo del negocio</label>
+            <div className='flex items-start gap-4'>
+              {/* Preview */}
+              <div className='flex-shrink-0'>
+                {logoValue ? (
+                  <div className='relative'>
+                    <img
+                      src={logoValue}
+                      alt='Logo negocio'
+                      className='w-20 h-20 rounded-2xl object-cover border-2 border-gray-200'
+                      onError={e => { e.target.src = '' }}
+                    />
+                    <button
+                      type='button'
+                      onClick={() => { setValue('logo', ''); if (fileRef.current) fileRef.current.value = '' }}
+                      className='absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600'
+                    >
+                      <X className='w-3 h-3' />
+                    </button>
+                  </div>
+                ) : (
+                  <div className='w-20 h-20 rounded-2xl border-2 border-dashed border-gray-200 flex items-center justify-center bg-gray-50'>
+                    <Upload className='w-6 h-6 text-gray-300' />
+                  </div>
+                )}
+              </div>
+
+              {/* Controles */}
+              <div className='flex-1 space-y-2'>
+                {/* Botón subir archivo */}
                 <input
-                  type='url'
-                  placeholder='https://ejemplo.com/mi-logo.png'
-                  className='w-full px-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-400'
+                  ref={fileRef}
+                  type='file'
+                  accept='image/*'
+                  className='hidden'
+                  onChange={handleFileChange}
+                />
+                <button
+                  type='button'
+                  disabled={uploading}
+                  onClick={() => fileRef.current?.click()}
+                  className='flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50'
+                >
+                  <Upload className='w-4 h-4' />
+                  {uploading ? 'Procesando...' : 'Subir foto desde tu dispositivo'}
+                </button>
+                <p className='text-xs text-gray-400'>JPG, PNG o WebP · máx. 800 KB</p>
+
+                {/* O pegar URL */}
+                <div className='flex items-center gap-2'>
+                  <div className='flex-1 h-px bg-gray-200' />
+                  <span className='text-xs text-gray-400'>o pega una URL</span>
+                  <div className='flex-1 h-px bg-gray-200' />
+                </div>
+                <input
+                  type='text'
+                  placeholder='https://...'
+                  className='w-full px-3 py-2 rounded-lg border border-gray-200 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-gray-400'
                   {...register('logo')}
                 />
-                {errors.logo && <p className='mt-1 text-xs text-red-500'>{errors.logo.message}</p>}
               </div>
-              {logoValue && (
-                <img
-                  src={logoValue}
-                  alt='Preview logo'
-                  className='w-12 h-12 rounded-xl object-cover border border-gray-200 flex-shrink-0'
-                  onError={e => { e.target.style.display = 'none' }}
-                />
-              )}
             </div>
-            <p className='text-xs text-gray-400'>Se mostrará en tu página pública de reservas</p>
           </div>
           <Button type='submit' loading={isPending}>
             Guardar cambios

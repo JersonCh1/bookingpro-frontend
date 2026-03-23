@@ -18,8 +18,9 @@ import BookingPage    from './pages/public/BookingPage'
 import MyBookings     from './pages/public/MyBookings'
 import CancelBooking  from './pages/public/CancelBooking'
 import RateBooking    from './pages/public/RateBooking'
-import Landing        from './pages/Landing'
-import NotFound       from './pages/NotFound'
+import Landing              from './pages/Landing'
+import TermsAndConditions  from './pages/TermsAndConditions'
+import NotFound            from './pages/NotFound'
 
 import SuperAdminLayout        from './pages/superadmin/SuperAdminLayout'
 import SuperAdminOverview      from './pages/superadmin/SuperAdminOverview'
@@ -65,6 +66,7 @@ function AppInner() {
         <Route path='/mis-reservas'    element={<MyBookings />} />
         <Route path='/cancelar/:token' element={<CancelBooking />} />
         <Route path='/valorar/:token'  element={<RateBooking />} />
+        <Route path='/terminos'        element={<TermsAndConditions />} />
 
         {/* Públicas (redirigen a dashboard si ya está logueado) */}
         <Route path='/'         element={<PublicRoute><Landing /></PublicRoute>} />

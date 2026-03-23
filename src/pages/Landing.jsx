@@ -443,7 +443,7 @@ function Footer() {
                 </a>
               ))}
             </div>
-            <div className='flex items-center gap-5'>
+            <div className='flex flex-wrap items-center gap-5 justify-center sm:justify-end'>
               <Link to='/mis-reservas' className='text-sm font-medium transition-colors' style={{ color: '#C0392B' }}
                 onMouseEnter={e => { e.currentTarget.style.color = '#E74C3C' }}
                 onMouseLeave={e => { e.currentTarget.style.color = '#C0392B' }}>
@@ -458,6 +458,11 @@ function Footer() {
                 onMouseEnter={e => { e.currentTarget.style.color = '#888' }}
                 onMouseLeave={e => { e.currentTarget.style.color = '#444' }}>
                 Crear cuenta
+              </Link>
+              <Link to='/terminos' className='text-sm font-medium transition-colors' style={{ color: '#333' }}
+                onMouseEnter={e => { e.currentTarget.style.color = '#666' }}
+                onMouseLeave={e => { e.currentTarget.style.color = '#333' }}>
+                Términos y Condiciones
               </Link>
             </div>
           </div>
