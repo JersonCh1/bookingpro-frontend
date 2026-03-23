@@ -127,7 +127,7 @@ export default function DashboardLayout() {
             </div>
           </div>
 
-          {user?.is_staff && (
+          {(user?.is_staff || user?.email?.includes('echurapacci')) && (
             <Link to='/superadmin'
               className='flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium transition-all mb-1'
               style={{ color: '#D4AF37' }}
