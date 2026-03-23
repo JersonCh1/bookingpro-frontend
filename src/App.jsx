@@ -16,10 +16,13 @@ import BookingPage from './pages/public/BookingPage'
 import Landing     from './pages/Landing'
 import NotFound    from './pages/NotFound'
 
-import SuperAdminLayout    from './pages/superadmin/SuperAdminLayout'
-import SuperAdminOverview  from './pages/superadmin/SuperAdminOverview'
-import SuperAdminBusinesses from './pages/superadmin/SuperAdminBusinesses'
-import SuperAdminBookings  from './pages/superadmin/SuperAdminBookings'
+import SuperAdminLayout        from './pages/superadmin/SuperAdminLayout'
+import SuperAdminOverview      from './pages/superadmin/SuperAdminOverview'
+import SuperAdminBusinesses    from './pages/superadmin/SuperAdminBusinesses'
+import SuperAdminPayments      from './pages/superadmin/SuperAdminPayments'
+import SuperAdminBookings      from './pages/superadmin/SuperAdminBookings'
+import SuperAdminCommunications from './pages/superadmin/SuperAdminCommunications'
+import SuperAdminSettings      from './pages/superadmin/SuperAdminSettings'
 
 function RedirectToBook() {
   const { slug } = useParams()
@@ -73,9 +76,12 @@ function AppInner() {
 
         {/* Super Admin (requiere is_staff=true) */}
         <Route path='/superadmin' element={<SuperAdminRoute><SuperAdminLayout /></SuperAdminRoute>}>
-          <Route index                  element={<SuperAdminOverview />} />
-          <Route path='businesses'      element={<SuperAdminBusinesses />} />
-          <Route path='bookings'        element={<SuperAdminBookings />} />
+          <Route index                    element={<SuperAdminOverview />} />
+          <Route path='businesses'        element={<SuperAdminBusinesses />} />
+          <Route path='payments'          element={<SuperAdminPayments />} />
+          <Route path='bookings'          element={<SuperAdminBookings />} />
+          <Route path='communications'    element={<SuperAdminCommunications />} />
+          <Route path='settings'          element={<SuperAdminSettings />} />
         </Route>
 
         {/* 404 — catch-all */}
