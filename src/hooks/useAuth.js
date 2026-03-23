@@ -20,7 +20,7 @@ export function useLogin() {
     onSuccess: (payload) => {
       // payload = { access, refresh, user, tenant }
       setAuth(payload)
-      navigate(payload.user?.is_staff ? '/superadmin' : '/dashboard')
+      navigate(payload.is_staff ? '/superadmin' : '/dashboard')
     },
   })
 }
