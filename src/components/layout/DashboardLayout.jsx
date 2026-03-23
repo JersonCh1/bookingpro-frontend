@@ -2,6 +2,7 @@ import { Outlet, NavLink, Link } from 'react-router-dom'
 import {
   LayoutDashboard, Calendar, Scissors, Users, Settings,
   LogOut, Menu, X, ExternalLink, Clock, ShieldCheck,
+  UserCheck, BarChart2,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useAuthStore } from '../../store/authStore'
@@ -9,12 +10,14 @@ import { useLogout } from '../../hooks/useAuth'
 import { SidebarLogo, LogoFull } from '../ui/Logo'
 
 const NAV_ITEMS = [
-  { to: '/dashboard',            label: 'Resumen',   icon: LayoutDashboard, end: true },
-  { to: '/dashboard/bookings',   label: 'Reservas',  icon: Calendar },
-  { to: '/dashboard/services',   label: 'Servicios', icon: Scissors },
-  { to: '/dashboard/staff',      label: 'Personal',  icon: Users },
-  { to: '/dashboard/scheduling', label: 'Horarios',  icon: Clock },
-  { to: '/dashboard/settings',   label: 'Ajustes',   icon: Settings },
+  { to: '/dashboard',              label: 'Resumen',       icon: LayoutDashboard, end: true },
+  { to: '/dashboard/bookings',     label: 'Reservas',      icon: Calendar },
+  { to: '/dashboard/services',     label: 'Servicios',     icon: Scissors },
+  { to: '/dashboard/staff',        label: 'Personal',      icon: Users },
+  { to: '/dashboard/customers',    label: 'Clientes',      icon: UserCheck },
+  { to: '/dashboard/scheduling',   label: 'Horarios',      icon: Clock },
+  { to: '/dashboard/analytics',    label: 'Estadísticas',  icon: BarChart2 },
+  { to: '/dashboard/settings',     label: 'Ajustes',       icon: Settings },
 ]
 
 export default function DashboardLayout() {

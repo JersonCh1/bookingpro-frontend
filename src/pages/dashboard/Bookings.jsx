@@ -1,10 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useBookings, useUpdateBookingStatus, useStaff } from '../../hooks/useBookings'
 import { StatusBadge } from '../../components/ui/Badge'
 import Button from '../../components/ui/Button'
 import Modal from '../../components/ui/Modal'
 import { formatDate, formatTime, formatCurrency } from '../../utils/helpers'
-import { Search, Calendar, Phone, CheckCircle, XCircle, Clock, UserX, User } from 'lucide-react'
+import { Search, Calendar, Phone, CheckCircle, XCircle, Clock, UserX, User, List, LayoutGrid } from 'lucide-react'
+import {
+  startOfWeek, endOfWeek, eachDayOfInterval, addWeeks, subWeeks, format, isSameDay, parseISO,
+} from 'date-fns'
+import { es } from 'date-fns/locale'
 
 const STATUS_OPTIONS = [
   { value: '',          label: 'Todos los estados' },
@@ -22,10 +26,76 @@ const STATUS_ACTIONS = [
   { value: 'no_show',   label: 'No se presentó',  icon: UserX,       className: 'text-orange-600 hover:bg-orange-50' },
 ]
 
+/* ── Calendar Week View ── */
+const HOUR_COLORS = ['#fef2f2','#fff7ed','#fefce8','#f0fdf4','#eff6ff','#faf5ff','#fdf4ff']
+
+function WeekView({ bookings, onSelect, weekStart, onPrev, onNext }) {
+  const days = eachDayOfInterval({ start: weekStart, end: endOfWeek(weekStart, { weekStartsOn: 1 }) })
+
+  const bookingsByDay = useMemo(() => {
+    const map = {}
+    days.forEach(d => { map[format(d, 'yyyy-MM-dd')] = [] })
+    bookings.forEach(b => {
+      if (map[b.date]) map[b.date].push(b)
+    })
+    return map
+  }, [bookings, days])
+
+  return (
+    <div className='card overflow-hidden'>
+      {/* Week nav */}
+      <div className='flex items-center justify-between px-5 py-3 border-b border-gray-100'>
+        <button onClick={onPrev} className='p-1.5 rounded-lg hover:bg-gray-100 text-gray-500'>‹</button>
+        <p className='text-sm font-bold text-gray-900 capitalize'>
+          Semana del {format(weekStart, "d 'de' MMMM", { locale: es })}
+        </p>
+        <button onClick={onNext} className='p-1.5 rounded-lg hover:bg-gray-100 text-gray-500'>›</button>
+      </div>
+      {/* Grid */}
+      <div className='grid grid-cols-7 border-b border-gray-100'>
+        {days.map((d, i) => (
+          <div key={i} className='px-2 py-2 text-center border-r last:border-r-0 border-gray-100'>
+            <p className='text-[10px] font-bold text-gray-400 uppercase'>
+              {format(d, 'EEE', { locale: es })}
+            </p>
+            <p className={`text-sm font-black mt-0.5 ${isSameDay(d, new Date()) ? 'text-white w-6 h-6 rounded-full flex items-center justify-center mx-auto' : 'text-gray-700'}`}
+              style={isSameDay(d, new Date()) ? { backgroundColor: '#C0392B' } : {}}>
+              {format(d, 'd')}
+            </p>
+          </div>
+        ))}
+      </div>
+      <div className='grid grid-cols-7 min-h-[160px]'>
+        {days.map((d, i) => {
+          const dateStr = format(d, 'yyyy-MM-dd')
+          const dayBookings = bookingsByDay[dateStr] || []
+          return (
+            <div key={i} className='border-r last:border-r-0 border-gray-100 p-1.5 space-y-1'>
+              {dayBookings.map((b, j) => (
+                <button key={b.id} onClick={() => onSelect(b)}
+                  className='w-full text-left px-2 py-1.5 rounded-lg text-[11px] font-semibold transition-all hover:opacity-80'
+                  style={{ backgroundColor: HOUR_COLORS[j % HOUR_COLORS.length], color: '#374151' }}>
+                  <p className='truncate font-bold'>{b.customer_name}</p>
+                  <p className='truncate text-gray-500'>{b.start_time?.slice(0,5)} {b.service_name}</p>
+                </button>
+              ))}
+              {dayBookings.length === 0 && (
+                <div className='text-center text-gray-200 text-xs pt-3'>—</div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 export default function Bookings() {
   const [filters, setFilters]   = useState({ status: '', search: '', date_from: '', date_to: '' })
   const [selected, setSelected] = useState(null)
   const [page, setPage]         = useState(1)
+  const [viewMode, setViewMode] = useState('list') // 'list' | 'week'
+  const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }))
 
   const { data, isLoading }                        = useBookings({ ...filters, page })
   const { mutate: updateStatus, isPending: saving } = useUpdateBookingStatus()
@@ -49,9 +119,31 @@ export default function Bookings() {
     <div className='space-y-5'>
 
       {/* Cabecera */}
-      <div>
-        <h1 className='text-2xl font-bold text-gray-900'>Reservas</h1>
-        <p className='text-gray-500 text-sm mt-0.5'>Gestiona todas las citas de tu negocio</p>
+      <div className='flex items-center justify-between'>
+        <div>
+          <h1 className='text-2xl font-bold text-gray-900'>Reservas</h1>
+          <p className='text-gray-500 text-sm mt-0.5'>Gestiona todas las citas de tu negocio</p>
+        </div>
+        <div className='flex gap-1 bg-gray-100 p-1 rounded-xl'>
+          <button onClick={() => setViewMode('list')}
+            className='px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-all'
+            style={{
+              backgroundColor: viewMode === 'list' ? 'white' : 'transparent',
+              color: viewMode === 'list' ? '#111827' : '#6b7280',
+              boxShadow: viewMode === 'list' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+            }}>
+            <List className='w-3.5 h-3.5' /> Lista
+          </button>
+          <button onClick={() => setViewMode('week')}
+            className='px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-all'
+            style={{
+              backgroundColor: viewMode === 'week' ? 'white' : 'transparent',
+              color: viewMode === 'week' ? '#111827' : '#6b7280',
+              boxShadow: viewMode === 'week' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+            }}>
+            <LayoutGrid className='w-3.5 h-3.5' /> Semana
+          </button>
+        </div>
       </div>
 
       {/* Filtros */}
@@ -107,8 +199,19 @@ export default function Bookings() {
         </div>
       </div>
 
+      {/* Vista Semana */}
+      {viewMode === 'week' && (
+        <WeekView
+          bookings={data?.results ?? []}
+          onSelect={setSelected}
+          weekStart={weekStart}
+          onPrev={() => setWeekStart(w => subWeeks(w, 1))}
+          onNext={() => setWeekStart(w => addWeeks(w, 1))}
+        />
+      )}
+
       {/* Lista */}
-      {isLoading ? (
+      {viewMode === 'list' && (isLoading ? (
         <div className='space-y-3'>
           {[...Array(4)].map((_, i) => (
             <div key={i} className='card p-4 h-20 animate-pulse bg-gray-50' />
@@ -225,7 +328,7 @@ export default function Bookings() {
             ))}
           </div>
         </>
-      )}
+      ))}
 
       {/* Paginación */}
       {totalPages > 1 && (

@@ -444,6 +444,11 @@ function Footer() {
               ))}
             </div>
             <div className='flex items-center gap-5'>
+              <Link to='/mis-reservas' className='text-sm font-medium transition-colors' style={{ color: '#C0392B' }}
+                onMouseEnter={e => { e.currentTarget.style.color = '#E74C3C' }}
+                onMouseLeave={e => { e.currentTarget.style.color = '#C0392B' }}>
+                ¿Ya reservaste? Ver mis citas →
+              </Link>
               <Link to='/login' className='text-sm font-medium transition-colors' style={{ color: '#444' }}
                 onMouseEnter={e => { e.currentTarget.style.color = '#888' }}
                 onMouseLeave={e => { e.currentTarget.style.color = '#444' }}>

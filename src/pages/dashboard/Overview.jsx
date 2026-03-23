@@ -1,4 +1,4 @@
-import { Calendar, CheckCircle, Clock, TrendingUp, ExternalLink, ArrowRight, Copy, Check } from 'lucide-react'
+import { Calendar, CheckCircle, Clock, TrendingUp, ExternalLink, ArrowRight, Copy, Check, Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
@@ -7,6 +7,7 @@ import { useAuthStore } from '../../store/authStore'
 import { StatusBadge } from '../../components/ui/Badge'
 import { formatDate, formatTime, formatCurrency } from '../../utils/helpers'
 import client from '../../api/client'
+import { bookingsApi } from '../../api/bookings'
 
 function StatCard({ title, value, subtitle, icon: Icon, colorClass }) {
   return (
@@ -108,6 +109,37 @@ function OnboardingBanner({ tenant }) {
   )
 }
 
+function RatingCard() {
+  const { data } = useQuery({
+    queryKey: ['ratings-mine-overview'],
+    queryFn:  () => bookingsApi.ratingsMine().then(r => r.data.data),
+    staleTime: 60000,
+  })
+  if (!data || !data.total) return null
+  return (
+    <div className='card p-5 flex items-center gap-4'>
+      <div className='inline-flex p-2.5 rounded-xl bg-yellow-50'>
+        <Star className='w-5 h-5 text-yellow-500 fill-yellow-400' />
+      </div>
+      <div className='flex-1 min-w-0'>
+        <div className='flex items-center gap-2'>
+          <p className='text-2xl font-bold text-gray-900'>{Number(data.avg).toFixed(1)}</p>
+          <div className='flex gap-0.5'>
+            {[1,2,3,4,5].map(n => (
+              <Star key={n} className='w-3.5 h-3.5'
+                style={{ color: '#f59e0b', fill: n <= Math.round(data.avg) ? '#f59e0b' : 'transparent' }} />
+            ))}
+          </div>
+        </div>
+        <p className='text-xs text-gray-400'>Basado en {data.total} valoracion{data.total !== 1 ? 'es' : ''}</p>
+      </div>
+      <Link to='/dashboard/analytics' className='text-xs font-bold text-primary-600 hover:text-primary-700 whitespace-nowrap'>
+        Ver reseñas →
+      </Link>
+    </div>
+  )
+}
+
 export default function Overview() {
   const { data: stats, isLoading } = useStats()
   const { tenant } = useAuthStore()
@@ -139,6 +171,9 @@ export default function Overview() {
 
       {/* Banner de onboarding — desaparece cuando hay servicios */}
       {showOnboarding && tenant?.slug && <OnboardingBanner tenant={tenant} />}
+
+      {/* Card de valoraciones */}
+      <RatingCard />
 
       {/* Cabecera con bienvenida */}
       <div className='flex items-start justify-between gap-4'>

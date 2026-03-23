@@ -11,10 +11,15 @@ import Services    from './pages/dashboard/Services'
 import Staff       from './pages/dashboard/Staff'
 import Scheduling  from './pages/dashboard/Scheduling'
 import Settings    from './pages/dashboard/Settings'
+import Customers   from './pages/dashboard/Customers'
+import Analytics   from './pages/dashboard/Analytics'
 
-import BookingPage from './pages/public/BookingPage'
-import Landing     from './pages/Landing'
-import NotFound    from './pages/NotFound'
+import BookingPage    from './pages/public/BookingPage'
+import MyBookings     from './pages/public/MyBookings'
+import CancelBooking  from './pages/public/CancelBooking'
+import RateBooking    from './pages/public/RateBooking'
+import Landing        from './pages/Landing'
+import NotFound       from './pages/NotFound'
 
 import SuperAdminLayout        from './pages/superadmin/SuperAdminLayout'
 import SuperAdminOverview      from './pages/superadmin/SuperAdminOverview'
@@ -54,10 +59,12 @@ function AppInner() {
   return (
     <div key={location.pathname} style={{ animation: 'fade-slide-up 0.15s ease both' }}>
       <Routes>
-        {/* Página pública de reservas (sin auth) — primero para evitar conflictos */}
-        <Route path='/book/:slug' element={<BookingPage />} />
-        {/* Redirect de ruta vieja /b/:slug → /book/:slug */}
-        <Route path='/b/:slug' element={<RedirectToBook />} />
+        {/* Páginas públicas sin auth */}
+        <Route path='/book/:slug'      element={<BookingPage />} />
+        <Route path='/b/:slug'         element={<RedirectToBook />} />
+        <Route path='/mis-reservas'    element={<MyBookings />} />
+        <Route path='/cancelar/:token' element={<CancelBooking />} />
+        <Route path='/valorar/:token'  element={<RateBooking />} />
 
         {/* Públicas (redirigen a dashboard si ya está logueado) */}
         <Route path='/'         element={<PublicRoute><Landing /></PublicRoute>} />
@@ -71,6 +78,8 @@ function AppInner() {
           <Route path='services'     element={<Services />} />
           <Route path='staff'        element={<Staff />} />
           <Route path='scheduling'   element={<Scheduling />} />
+          <Route path='customers'    element={<Customers />} />
+          <Route path='analytics'    element={<Analytics />} />
           <Route path='settings'     element={<Settings />} />
         </Route>
 

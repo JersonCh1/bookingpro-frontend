@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { useState, useMemo, useEffect } from 'react'
+import { useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -180,7 +180,16 @@ function StepDate({ slug, service, onSelect }) {
     }).then(r => r.data?.data ?? r.data),
   })
 
-  const availableDays = useMemo(() => parseAvailableDays(raw), [raw])
+  const { data: blockedData = [] } = useQuery({
+    queryKey: ['public-blocked-days', slug],
+    queryFn:  () => client.get(`/tenants/${slug}/blocked-days/`).then(r => r.data.data),
+  })
+  const blockedSet = useMemo(() => new Set(blockedData.map(d => d.date)), [blockedData])
+
+  const availableDays = useMemo(
+    () => parseAvailableDays(raw).filter(d => !blockedSet.has(d)),
+    [raw, blockedSet]
+  )
 
   const days    = eachDayOfInterval({ start: startOfMonth(month), end: endOfMonth(month) })
   const blanks  = Array(getDay(days[0])).fill(null)
@@ -635,6 +644,53 @@ function StepSuccess({ booking, service, tenant }) {
           )
         } catch { return null }
       })()}
+
+      <Link to='/mis-reservas'
+        className='mt-2 flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold transition-all'
+        style={{ border: '1.5px solid #e5e7eb', color: '#6b7280', backgroundColor: 'white' }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = '#C0392B'; e.currentTarget.style.color = '#C0392B' }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.color = '#6b7280' }}
+      >
+        Ver mis reservas →
+      </Link>
+    </div>
+  )
+}
+
+// ── PWA Install Banner ─────────────────────────────────────────────────────
+function InstallBanner() {
+  const [prompt, setPrompt] = useState(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const handler = (e) => { e.preventDefault(); setPrompt(e); setVisible(true) }
+    window.addEventListener('beforeinstallprompt', handler)
+    return () => window.removeEventListener('beforeinstallprompt', handler)
+  }, [])
+
+  if (!visible || !prompt) return null
+
+  return (
+    <div className='fixed bottom-4 left-4 right-4 z-50 max-w-lg mx-auto'>
+      <div className='rounded-2xl p-4 flex items-center gap-3 shadow-2xl'
+        style={{ backgroundColor: '#0D0D0D', border: '1px solid #2C2C2C' }}>
+        <div className='w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0'
+          style={{ backgroundColor: '#C0392B' }}>
+          <span className='text-white text-lg font-black'>A</span>
+        </div>
+        <div className='flex-1 min-w-0'>
+          <p className='text-sm font-bold text-white'>Instalar AgendaYa</p>
+          <p className='text-xs text-gray-500'>Accede más rápido desde tu inicio</p>
+        </div>
+        <button onClick={async () => { await prompt.prompt(); setVisible(false) }}
+          className='px-3 py-1.5 rounded-lg text-xs font-bold text-white flex-shrink-0'
+          style={{ backgroundColor: '#C0392B' }}>
+          Instalar
+        </button>
+        <button onClick={() => setVisible(false)} className='text-gray-600 hover:text-gray-400 flex-shrink-0'>
+          <X className='w-4 h-4' />
+        </button>
+      </div>
     </div>
   )
 }
@@ -830,6 +886,8 @@ export default function BookingPage() {
           <LogoFull height={18} />
         </div>
       </footer>
+
+      <InstallBanner />
     </div>
   )
 }
