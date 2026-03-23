@@ -53,6 +53,7 @@ export const useAuthStore = create(
       // ── Helpers de conveniencia ───────────────────────
       isOwner:       () => get().user?.role === 'owner',
       isLoggedIn:    () => !!get().token,
+      isStaff:       () => get().user?.is_staff === true,
       getTenantSlug: () => get().tenant?.slug ?? null,
     }),
     {
