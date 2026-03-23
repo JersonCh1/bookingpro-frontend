@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { adminApi } from '../../api/admin'
-import { Search, Eye, Ban, Trash2, CheckCircle, ExternalLink, X } from 'lucide-react'
+import { Search, Eye, Ban, Trash2, CheckCircle, ExternalLink, X, Store } from 'lucide-react'
 
 const STATUS_LABEL = { true: 'Activo', false: 'Bloqueado' }
 
