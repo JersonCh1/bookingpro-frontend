@@ -1,6 +1,18 @@
 User-agent: *
 Allow: /
+Allow: /register
+Allow: /login
+Allow: /terminos
+Allow: /mis-reservas
 Disallow: /dashboard/
-Disallow: /dashboard/*
+Disallow: /dashboard
+Disallow: /superadmin/
+Disallow: /superadmin
+Disallow: /cancelar/
+Disallow: /valorar/
 
-Sitemap: https://agendaya.pe/sitemap.xml
+# Sitemaps
+Sitemap: https://www.agendaya.online/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1

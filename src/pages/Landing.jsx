@@ -91,10 +91,14 @@ function Hero() {
           </span>
         </div>
 
-        <h1 className='text-4xl sm:text-6xl font-black text-white leading-[1.05] tracking-tight mb-6'>
+        <h1 className='text-4xl sm:text-6xl font-black text-white leading-[1.05] tracking-tight mb-4'>
           Tu agenda,<br />
           <span style={{ color: '#C0392B' }}>siempre llena.</span>
         </h1>
+
+        <p className='text-sm sm:text-base text-gray-500 mb-5 max-w-2xl mx-auto leading-relaxed'>
+          El sistema de reservas online para barberías, salones de belleza, consultorios y negocios en Perú. Reservas 24/7, notificaciones WhatsApp automáticas. ¡Sin llamadas, sin WhatsApps manuales!
+        </p>
 
         <p className='text-base sm:text-xl text-gray-400 mb-10 max-w-xl mx-auto leading-relaxed'>
           El sistema de reservas que trabaja por ti las 24 horas. Clientes reservan solos, tú recibes notificaciones por WhatsApp.
@@ -233,12 +237,12 @@ function HowItWorks() {
 /* ── Rubros ── */
 function BusinessTypes() {
   const types = [
-    { icon: '✂', label: 'Barberías' },
-    { icon: '💅', label: 'Salones de Belleza' },
-    { icon: '🏥', label: 'Consultorios' },
-    { icon: '🐾', label: 'Veterinarias' },
-    { icon: '🍕', label: 'Restaurantes' },
-    { icon: '💪', label: 'Gimnasios' },
+    { icon: '✂', label: 'Barberías', desc: 'Cortes, diseño de barba y reservas sin llamadas' },
+    { icon: '💅', label: 'Salones de Belleza', desc: 'Manicure, peinados y citas organizadas sin estrés' },
+    { icon: '🏥', label: 'Consultorios', desc: 'Citas médicas, dentales o psicológicas en línea' },
+    { icon: '🐾', label: 'Veterinarias', desc: 'Consultas y baños para mascotas con reserva online' },
+    { icon: '🍕', label: 'Restaurantes', desc: 'Reservas de mesa y eventos sin WhatsApps manuales' },
+    { icon: '💪', label: 'Gimnasios', desc: 'Clases y sesiones personales con agenda automática' },
   ]
   return (
     <section className='py-20 sm:py-24' style={{ backgroundColor: '#0D0D0D' }}>
@@ -271,8 +275,11 @@ function BusinessTypes() {
                   e.currentTarget.style.transform = 'translateX(0)'
                 }}
               >
-                <span className='text-2xl'>{t.icon}</span>
-                <span className='text-sm font-semibold text-gray-300'>{t.label}</span>
+                <span className='text-2xl flex-shrink-0'>{t.icon}</span>
+                <div>
+                  <p className='text-sm font-semibold text-gray-300'>{t.label}</p>
+                  <p className='text-xs text-gray-600 mt-0.5 leading-snug'>{t.desc}</p>
+                </div>
               </div>
             </AnimatedCard>
           ))}
@@ -403,6 +410,37 @@ function FinalCTA() {
   )
 }
 
+/* ── Cobertura Nacional ── */
+function CoverageSection() {
+  const cities = [
+    'Arequipa', 'Lima', 'Cusco', 'Trujillo', 'Piura',
+    'Chiclayo', 'Tacna', 'Puno', 'Iquitos', 'Huancayo',
+  ]
+  return (
+    <section className='py-16 sm:py-20' style={{ backgroundColor: '#111' }}>
+      <div className='max-w-4xl mx-auto px-5 sm:px-8 text-center'>
+        <h2 className='text-2xl sm:text-3xl font-black text-white mb-3'>Disponible en todo el Perú</h2>
+        <p className='text-gray-500 text-sm mb-10'>
+          Negocios de servicios de norte a sur ya usan AgendaYa para gestionar sus citas online
+        </p>
+        <div className='flex flex-wrap justify-center gap-2'>
+          {cities.map((city, i) => (
+            <span key={city}
+              className='px-4 py-2 rounded-full text-sm font-semibold'
+              style={{
+                backgroundColor: i === 0 ? 'rgba(192,57,43,0.15)' : 'rgba(255,255,255,0.04)',
+                border: `1px solid ${i === 0 ? 'rgba(192,57,43,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                color: i === 0 ? '#E74C3C' : '#666',
+              }}>
+              {i === 0 ? '📍 ' : ''}{city}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 /* ── Footer con redes sociales ── */
 function Footer() {
   const socials = [
@@ -482,6 +520,7 @@ export default function Landing() {
       <HowItWorks />
       <BusinessTypes />
       <Pricing />
+      <CoverageSection />
       <FinalCTA />
       <Footer />
     </div>
