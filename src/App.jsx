@@ -22,6 +22,13 @@ import Landing              from './pages/Landing'
 import TermsAndConditions  from './pages/TermsAndConditions'
 import NotFound            from './pages/NotFound'
 
+import BlogIndex                   from './pages/blog/BlogIndex'
+import ReservasOnlineBarberia      from './pages/blog/ReservasOnlineBarberia'
+import SistemaCitasSalonBelleza    from './pages/blog/SistemaCitasSalonBelleza'
+import AgendaOnlineNegocios        from './pages/blog/AgendaOnlineNegocios'
+import DigitalizarCitasConsultorio from './pages/blog/DigitalizarCitasConsultorio'
+import ReservasWhatsapp            from './pages/blog/ReservasWhatsapp'
+
 import SuperAdminLayout        from './pages/superadmin/SuperAdminLayout'
 import SuperAdminOverview      from './pages/superadmin/SuperAdminOverview'
 import SuperAdminBusinesses    from './pages/superadmin/SuperAdminBusinesses'
@@ -67,6 +74,14 @@ function AppInner() {
         <Route path='/cancelar/:token' element={<CancelBooking />} />
         <Route path='/valorar/:token'  element={<RateBooking />} />
         <Route path='/terminos'        element={<TermsAndConditions />} />
+
+        {/* Blog SEO */}
+        <Route path='/blog'                                                element={<BlogIndex />} />
+        <Route path='/blog/reservas-online-barberia-arequipa'              element={<ReservasOnlineBarberia />} />
+        <Route path='/blog/sistema-citas-salon-belleza-peru'               element={<SistemaCitasSalonBelleza />} />
+        <Route path='/blog/agenda-online-negocios-arequipa'                element={<AgendaOnlineNegocios />} />
+        <Route path='/blog/como-digitalizar-citas-consultorio-peru'        element={<DigitalizarCitasConsultorio />} />
+        <Route path='/blog/reservas-whatsapp-automaticas-negocios'         element={<ReservasWhatsapp />} />
 
         {/* Públicas (redirigen a dashboard si ya está logueado) */}
         <Route path='/'         element={<PublicRoute><Landing /></PublicRoute>} />

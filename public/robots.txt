@@ -4,6 +4,8 @@ Allow: /register
 Allow: /login
 Allow: /terminos
 Allow: /mis-reservas
+Allow: /blog
+Allow: /blog/
 Disallow: /dashboard/
 Disallow: /dashboard
 Disallow: /superadmin/
