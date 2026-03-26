@@ -17,7 +17,7 @@ const JSON_LD = {
   dateModified: '2026-03-25',
   mainEntityOfPage: {
     '@type': 'WebPage',
-    '@id': 'https://www.agendaya.online/blog/como-digitalizar-citas-consultorio-peru',
+    '@id': 'https://www.agendaya.online/blog/digitalizar-citas-consultorio-peru',
   },
 }
 
@@ -51,7 +51,7 @@ export default function DigitalizarCitasConsultorio() {
   useSEO({
     title: 'Cómo digitalizar las citas de tu consultorio en Perú | AgendaYa',
     description: 'Guía para profesionales de salud en Perú que quieren digitalizar sus citas. Reduce el ausentismo, mejora la experiencia del paciente y optimiza tu tiempo.',
-    canonical: 'https://www.agendaya.online/blog/como-digitalizar-citas-consultorio-peru',
+    canonical: 'https://www.agendaya.online/blog/digitalizar-citas-consultorio-peru',
     schema: JSON_LD,
   })
 

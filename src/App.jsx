@@ -80,7 +80,7 @@ function AppInner() {
         <Route path='/blog/reservas-online-barberia-arequipa'              element={<ReservasOnlineBarberia />} />
         <Route path='/blog/sistema-citas-salon-belleza-peru'               element={<SistemaCitasSalonBelleza />} />
         <Route path='/blog/agenda-online-negocios-arequipa'                element={<AgendaOnlineNegocios />} />
-        <Route path='/blog/como-digitalizar-citas-consultorio-peru'        element={<DigitalizarCitasConsultorio />} />
+        <Route path='/blog/digitalizar-citas-consultorio-peru'             element={<DigitalizarCitasConsultorio />} />
         <Route path='/blog/reservas-whatsapp-automaticas-negocios'         element={<ReservasWhatsapp />} />
 
         {/* Públicas (redirigen a dashboard si ya está logueado) */}
