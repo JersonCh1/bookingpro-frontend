@@ -802,10 +802,16 @@ export default function BookingPage() {
                 </span>
               </div>
               {(tenant.address || tenant.city) && (
-                <p className='text-sm flex items-center gap-1.5' style={{ color: '#666' }}>
-                  <MapPin className='w-3.5 h-3.5' />
-                  {tenant.address || tenant.city}
-                </p>
+                <a
+                  href={`https://maps.google.com/?q=${encodeURIComponent([tenant.address, tenant.city, 'Peru'].filter(Boolean).join(' '))}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='text-sm flex items-center gap-1.5 hover:underline'
+                  style={{ color: '#C0392B' }}
+                >
+                  <MapPin className='w-3.5 h-3.5 flex-shrink-0' />
+                  {[tenant.address, tenant.city].filter(Boolean).join(', ')}
+                </a>
               )}
               {tenant.phone && (
                 <p className='text-sm flex items-center gap-1.5 mt-0.5' style={{ color: '#666' }}>

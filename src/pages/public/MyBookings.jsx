@@ -230,6 +230,19 @@ function BookingCard({ b, onCancel, cancelling, cancelDone }) {
         <span className='font-semibold text-white'>S/. {parseFloat(b.service_price).toFixed(2)}</span>
       </div>
 
+      {(b.tenant_address || b.tenant_city) && (
+        <a
+          href={`https://maps.google.com/?q=${encodeURIComponent([b.tenant_address, b.tenant_city, 'Peru'].filter(Boolean).join(' '))}`}
+          target='_blank'
+          rel='noopener noreferrer'
+          className='inline-flex items-center gap-1.5 text-xs hover:underline'
+          style={{ color: '#C0392B' }}
+        >
+          <MapPin className='w-3 h-3 flex-shrink-0' />
+          {[b.tenant_address, b.tenant_city].filter(Boolean).join(', ')}
+        </a>
+      )}
+
       {can && !showConfirm && (
         <button onClick={() => setShowConfirm(true)}
           className='w-full py-2 rounded-lg text-xs font-bold transition-colors'

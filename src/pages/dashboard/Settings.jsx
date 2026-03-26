@@ -8,7 +8,7 @@ import { useAuthStore } from '../../store/authStore'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import Select from '../../components/ui/Select'
-import { ExternalLink, Copy, Check, Upload, X } from 'lucide-react'
+import { ExternalLink, Copy, Check, Upload, X, MapPin } from 'lucide-react'
 
 const MAX_SIZE_BYTES = 800 * 1024  // 800 KB
 
@@ -164,6 +164,18 @@ export default function Settings() {
             <Input label='Dirección' {...register('address')} />
             <Input label='Ciudad'    {...register('city')} />
           </div>
+          {(watch('address') || watch('city')) && (
+            <a
+              href={`https://maps.google.com/?q=${encodeURIComponent([watch('address'), watch('city'), 'Peru'].filter(Boolean).join(' '))}`}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='inline-flex items-center gap-1.5 text-xs font-medium -mt-2'
+              style={{ color: '#C0392B' }}
+            >
+              <MapPin className='w-3 h-3' />
+              Ver en Google Maps →
+            </a>
+          )}
           <div className='flex flex-col gap-1.5'>
             <label className='text-sm font-medium text-gray-700'>Descripción del negocio</label>
             <textarea
