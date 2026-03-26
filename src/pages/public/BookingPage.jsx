@@ -182,9 +182,17 @@ function StepDate({ slug, service, onSelect }) {
 
   const { data: blockedData } = useQuery({
     queryKey: ['public-blocked-days', slug],
-    queryFn:  () => client.get(`/tenants/${slug}/blocked-days/`).then(r => r.data.data ?? []),
+    queryFn:  () => client.get(`/tenants/${slug}/blocked-days/`).then(r => {
+      const d = r.data?.data ?? r.data
+      if (Array.isArray(d)) return d
+      if (Array.isArray(d?.results)) return d.results
+      return []
+    }),
   })
-  const blockedSet = useMemo(() => new Set((blockedData ?? []).map(d => d.date)), [blockedData])
+  const blockedSet = useMemo(() => {
+    const list = Array.isArray(blockedData) ? blockedData : []
+    return new Set(list.map(d => d.date))
+  }, [blockedData])
 
   const availableDays = useMemo(
     () => parseAvailableDays(raw).filter(d => !blockedSet.has(d)),
